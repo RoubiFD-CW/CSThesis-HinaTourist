@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <defs>
+    <!-- Ocean Blue Gradient -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" /> <!-- Cyan-400 -->
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" /> <!-- Blue-900 -->
+    </linearGradient>
+    
+    <!-- Sunset Oxide Gradient -->
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fb923c;stop-opacity:1" /> <!-- Orange-400 -->
+      <stop offset="100%" style="stop-color:#facc15;stop-opacity:1" /> <!-- Yellow-400 -->
+    </linearGradient>
+
+    <!-- Pin Red Gradient -->
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" /> <!-- Red-500 -->
+      <stop offset="100%" style="stop-color:#991b1b;stop-opacity:1" /> <!-- Red-800 -->
+    </linearGradient>
+
+    <!-- Water Reflection Pattern -->
+    <pattern id="waterPat" width="10" height="10" patternUnits="userSpaceOnUse">
+       <path d="M0,5 Q5,0 10,5" fill="none" stroke="white" stroke-width="0.5" stroke-opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <!-- Left Bar of H -->
+  <rect x="20" y="20" width="12" height="60" rx="2" fill="url(#blueGrad)" />
+  <rect x="20" y="20" width="12" height="60" rx="2" fill="url(#waterPat)" />
+
+  <!-- Right Bar of H -->
+  <rect x="45" y="20" width="12" height="35" rx="2" fill="url(#blueGrad)" /> <!-- Shortened for Pin -->
+  <rect x="45" y="65" width="12" height="15" rx="2" fill="url(#blueGrad)" /> <!-- Bottom part -->
+  
+  <!-- Connecting bridge of H (Hidden by swoosh/wave usually, but adding structure) -->
+  <rect x="32" y="45" width="13" height="8" fill="url(#blueGrad)" opacity="0.8"/>
+
+  <!-- Location Pin on top of Right Bar -->
+  <!-- Pin Head -->
+  <path d="M51 10 C 44 10, 39 15, 39 22 C 39 30, 51 45, 51 45 C 51 45, 63 30, 63 22 C 63 15, 58 10, 51 10 Z" fill="url(#redGrad)" transform="translate(0, 0)"/>
+  <circle cx="51" cy="22" r="4" fill="white"/>
+
+  <!-- Orange Swoosh/Wave -->
+  <path d="M 10 55 Q 35 35, 60 55 T 90 50" fill="none" stroke="url(#orangeGrad)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 15 62 Q 35 45, 60 62 T 85 58" fill="none" stroke="url(#orangeGrad)" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Optional Text -->
+  <text x="50" y="105" font-family="Arial, sans-serif" font-weight="bold" font-size="14" text-anchor="middle" fill="#1e3a8a">HinaTourist</text>
+</svg>

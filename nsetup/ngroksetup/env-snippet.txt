@@ -1,0 +1,23 @@
+
+# ============================================
+# NGROK CONFIGURATION
+# ============================================
+# Add these lines to your .env file
+# ============================================
+
+# Ngrok Configuration (uncomment and set your ngrok URL for hot-reload support)
+# VITE_NGROK_URL=https://your-subdomain.ngrok-free.app
+
+# ============================================
+# USAGE:
+# ============================================
+# 
+# 1. Start ngrok: ngrok http 8000
+# 2. Copy the https URL (e.g., https://abc123.ngrok-free.app)
+# 3. Uncomment VITE_NGROK_URL and paste the URL
+# 4. Restart npm run dev
+#
+# This enables Vite's hot-reload to work through ngrok.
+# Without this, CSS/JS will still work, but you won't get
+# automatic page refresh when you save files.
+# ============================================
