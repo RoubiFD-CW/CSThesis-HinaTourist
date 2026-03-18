@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Site Pass') }} — Visitor Entry</title>
+    <title>{{ config('app.name', 'Site Pass') }} | Visitor Entry</title>
     @include('partials.head')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +40,7 @@
                     x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
                     <div class="divide-y divide-gray-200">
                         <div class="py-4 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                            <h2 class="text-xl font-bold text-slate-800 mb-1">Visitor Entry Pass</h2>
+                            <h2 class="text-xl font-bold text-slate-800 mb-1" x-text="'Visitor Entry Pass for ' + spotName"></h2>
                             <p class="text-sm text-slate-500 mb-6">Please fill out this form to generate your entry
                                 pass.</p>
 
@@ -204,9 +204,15 @@
                     timestamp: ''
                 },
                 errors: { male_count: '', female_count: '' },
+                spotName: 'Hinatuan Tourism',
 
                 init() {
                     const urlParams = new URLSearchParams(window.location.search);
+
+                    if (urlParams.has('name')) {
+                        this.spotName = urlParams.get('name');
+                    }
+
                     if (urlParams.has('area')) {
                         this.form.dedicated_area = urlParams.get('area');
                     }

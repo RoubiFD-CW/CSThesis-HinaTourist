@@ -116,7 +116,7 @@ export default function dashboard() {
 
         generateSiteQR() {
             const area = this.generatorArea;
-            this.siteUrl = `${cfg.visitorPassUrl}?area=${encodeURIComponent(area)}`;
+            this.siteUrl = `${cfg.visitorPassUrl}?area=${encodeURIComponent(area)}&name=${encodeURIComponent(area)}`;
             const canvas = document.getElementById('site-qr-canvas');
             if (window.QRCode) {
                 // Determine current URL for absolute reference if needed, but QRCode uses exact string.

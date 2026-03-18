@@ -38,15 +38,15 @@ class VisitorLogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'visitor_type' => 'required|string|max:255',
-            'group_size' => 'required|integer|min:1',
-            'male_count' => 'required|integer|min:0',
-            'female_count' => 'required|integer|min:0',
-            'origin' => 'required|string|max:255',
-            'visit_reason' => 'required|string|max:255',
+            'visitor_type'       => 'required|string|max:255',
+            'group_size'         => 'required|integer|min:1',
+            'male_count'         => 'required|integer|min:0',
+            'female_count'       => 'required|integer|min:0',
+            'origin'             => 'required|string|max:255',
+            'visit_reason'       => 'required|string|max:255',
             'visit_reason_other' => 'nullable|string|max:255',
-            'dedicated_area' => 'required|string',
-            'visit_date' => 'required|date',
+            'dedicated_area'     => 'nullable|string|max:255',
+            'visit_date'         => 'required|date',
         ]);
 
         try {
