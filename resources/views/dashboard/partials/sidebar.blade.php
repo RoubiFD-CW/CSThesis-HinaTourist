@@ -62,17 +62,16 @@
         </nav>
 
         <div class="mt-6 border-t border-slate-100 pt-6">
-            <div class="p-4 bg-slate-50 rounded-xl mb-4 border border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 rounded-full bg-[#008080]/10 flex items-center justify-center text-[#008080] font-bold text-sm shrink-0">
-                        {{ substr(Auth::user()->name, 0, 2) }}
+            <div class="p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-100 hover:border-slate-200 transition-all duration-300">
+                <div class="flex items-center gap-3 pl-0.5">
+                    <div class="w-10 h-10 rounded-full bg-[#008080]/10 flex items-center justify-center text-[#008080] shrink-0 border border-[#008080]/20 shadow-sm">
+                        <i class="fa-solid fa-circle-user text-lg"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-slate-900 truncate">
+                        <p class="text-sm font-bold text-slate-900 truncate tracking-tight leading-tight">
                             {{ Auth::user()->name }}
                         </p>
-                        <p class="text-xs text-slate-500 truncate">
+                        <p class="text-[10px] font-black text-[#008080] uppercase tracking-widest mt-1 opacity-80 leading-tight">
                             {{ Auth::user()->email }}
                         </p>
                     </div>
@@ -82,10 +81,9 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="flex w-full items-center px-4 py-3 text-slate-600 transition-colors transform rounded-xl hover:bg-rose-50 hover:text-rose-600 group">
-                    <i
-                        class="fa-solid fa-arrow-right-from-bracket w-6 group-hover:translate-x-1 transition-transform"></i>
-                    <span class="mx-2 font-medium">Sign Out</span>
+                    class="flex w-full items-center justify-center gap-2 px-4 py-3 text-slate-500 font-bold text-sm uppercase tracking-wider border border-slate-200 rounded-xl transition-all duration-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 hover:shadow-sm group active:scale-[0.98]">
+                    <i class="fa-solid fa-power-off group-hover:rotate-90 transition-transform duration-500"></i>
+                    <span>Log Out</span>
                 </button>
             </form>
         </div>

@@ -294,10 +294,10 @@
                         <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
                             <template x-if="lastSync">
                                 <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
-                                    <span class="relative flex h-2 w-2 shrink-0">
+                                    <!-- <span class="relative flex h-2 w-2 shrink-0">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
                                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                    </span>
+                                    </span> -->
                                     <span class="text-[11px] font-medium text-slate-500 tracking-tight">Last logs sync:
                                         <span class="font-bold text-slate-700" x-text="lastSync"></span>
                                     </span>
