@@ -949,7 +949,8 @@
                 selectedSpotIndex: 0,
                 activeInsightsTab: 'chart',
                 forecastChartInstance: null,
-                spots: [
+                // Fallback list — used only if /attractions endpoint is unreachable
+                fallbackSpots: [
                     'ENCHANTED RIVER',
                     'LODESTONE SHORES RESORT',
                     'BACULIN AMAZING SAND BAR',
@@ -1069,11 +1070,35 @@
                     this.availableMonths = [];
 
                     try {
-                        // Fetch concurrently for all spots via machine learning api
-                        const requests = this.spots.map(async spotName => {
-                            const response = await fetch('http://localhost:8000/forecast', {
+                        // ── Step 1: Discover all trained models from the API ──
+                        let spotNames = [];
+                        try {
+                            const attractionsRes = await fetch('/api/sarima/attractions');
+                            if (attractionsRes.ok) {
+                                const attractionsData = await attractionsRes.json();
+                                spotNames = (attractionsData.attractions || []).map(a => a.name);
+                                console.log(`Discovered ${spotNames.length} trained models from API:`, spotNames);
+                            }
+                        } catch (discoverErr) {
+                            console.warn('Could not discover attractions, falling back to hardcoded list:', discoverErr);
+                        }
+
+                        // Fall back to hardcoded list if discovery failed
+                        if (spotNames.length === 0) {
+                            spotNames = this.fallbackSpots;
+                            console.log('Using fallback spot list:', spotNames);
+                        }
+
+                        // ── Step 2: Fetch forecasts for every discovered attraction ──
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        const requests = spotNames.map(async spotName => {
+                            const response = await fetch('/api/sarima/forecast', {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json'
+                                },
                                 body: JSON.stringify({
                                     attraction_name: spotName,
                                     months_ahead: 12
@@ -1081,11 +1106,14 @@
                             });
 
                             if (!response.ok) {
-                                throw new Error('API Error');
+                                const errText = await response.text().catch(() => 'Unknown error');
+                                throw new Error(`API ${response.status} for "${spotName}": ${errText}`);
                             }
 
                             const data = await response.json();
-                            const nameFormatted = spotName.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+                            const nameFormatted = (data.attraction || spotName)
+                                .toLowerCase()
+                                .replace(/\b\w/g, s => s.toUpperCase());
 
                             return {
                                 name: data.attraction, name_formatted: nameFormatted,
@@ -1096,10 +1124,16 @@
                         });
 
                         const results = await Promise.allSettled(requests);
-                        results.forEach(result => {
-                            if (result.status === 'fulfilled') this.forecasts.push(result.value);
-                            else console.error('Failed to grab forecast for a spot:', result.reason);
+                        results.forEach((result, idx) => {
+                            if (result.status === 'fulfilled') {
+                                this.forecasts.push(result.value);
+                            } else {
+                                console.error(`Failed forecast for "${spotNames[idx]}":`, result.reason);
+                            }
                         });
+
+                        console.log(`Successfully loaded ${this.forecasts.length} / ${spotNames.length} forecasts:`,
+                            this.forecasts.map(f => f.name));
 
                         // Populate month dropdown options based on the first successful forecast timeline
                         if (this.forecasts.length > 0) {
@@ -1108,7 +1142,10 @@
                         }
 
                         if (this.forecasts.length === 0) this.error = "Prediction Server Unreachable";
-                    } catch (e) { this.error = "Connection Refused."; }
+                    } catch (e) {
+                        console.error('Forecast init error:', e);
+                        this.error = "Connection Refused.";
+                    }
                     finally { this.loading = false; }
                 }
             }

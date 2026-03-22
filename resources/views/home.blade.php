@@ -7,7 +7,7 @@
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
             <!-- Placeholder for Enchanted River - using a similar tropical blue river image -->
-            <img src="{{ asset('HinaTouristImages/enchanted.jpg') }}"
+            <img src="{{ asset('hinatuannewcover.svg') }}"
                 alt="Hinatuan Enchanted River" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-slate-900/40 via-cyan-900/20 to-transparent bg-gradient-to-b"></div>
         </div>

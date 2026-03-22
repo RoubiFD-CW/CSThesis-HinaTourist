@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => {
                 registerType: 'autoUpdate',
                 injectRegister: 'auto',
                 workbox: {
+                    maximumFileSizeToCacheInBytes: 15000000, // 15 MB limit
                     navigateFallback: null,
                     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
                     globIgnores: ['**/manifest.webmanifest'],

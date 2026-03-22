@@ -76,7 +76,7 @@
                             <i class="fa-solid fa-qrcode"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-900">Scan Visitor Pass</h3>
-                        <p class="text-slate-500 text-sm mt-1">Scan a tourist's digital exit pass to verify and log
+                        <p class="text-slate-500 text-sm mt-1">Scan a tourist's digital QR pass to verify and log
                             entry.</p>
                     </div>
                 </button>

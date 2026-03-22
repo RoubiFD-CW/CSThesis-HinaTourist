@@ -232,4 +232,42 @@ Route::middleware('auth')->group(function () {
                     : null,
             ]);
         })->middleware('is_admin')->name('api.statistics.area-breakdown');
+
+        // ════════════════════════════════════════════════════════════
+        // SARIMA Forecast API Proxy
+        // Forwards requests to FastAPI (localhost:8000) server-side
+        // so the browser never hits localhost directly (fixes CORS /
+        // Private Network Access errors when using ngrok or deploy).
+        // ════════════════════════════════════════════════════════════
+        Route::get('/api/sarima/attractions', function () {
+            try {
+                $apiUrl = rtrim(config('services.sarima.url', 'http://localhost:8000'), '/');
+                $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->timeout(120)
+                    ->get($apiUrl . '/attractions');
+
+                return response($response->body(), $response->status())
+                    ->header('Content-Type', 'application/json');
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'SARIMA API unreachable: ' . $e->getMessage()
+                ], 502);
+            }
+        })->middleware('is_admin')->name('api.sarima.attractions');
+
+        Route::post('/api/sarima/forecast', function (\Illuminate\Http\Request $request) {
+            try {
+                $apiUrl = rtrim(config('services.sarima.url', 'http://localhost:8000'), '/');
+                $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->timeout(120)
+                    ->post($apiUrl . '/forecast', $request->all());
+
+                return response($response->body(), $response->status())
+                    ->header('Content-Type', 'application/json');
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'SARIMA API unreachable: ' . $e->getMessage()
+                ], 502);
+            }
+        })->middleware('is_admin')->name('api.sarima.forecast');
     });

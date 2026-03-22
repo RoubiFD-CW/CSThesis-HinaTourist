@@ -39,13 +39,13 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 p-4 sm:p-8">
-        <div class="absolute inset-0 -z-10 pointer-events-none">
-            <div class="absolute top-[15%] right-[10%] w-[35%] h-[35%] rounded-full bg-rose-100/40 blur-[100px]"></div>
-            <div class="absolute bottom-[10%] left-[5%] w-[30%] h-[30%] rounded-full bg-amber-100/30 blur-[80px]"></div>
+    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 p-4 sm:p-8 bg-slate-50">
+        {{-- Dashboard SVG Background --}}
+        <div class="absolute inset-0 top-0 left-0 w-full h-full z-10 pointer-events-none">
+            <img src="{{ asset('dashboardimg.svg') }}" alt="Dashboard Background" class="w-full h-full object-cover object-top opacity-100">
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4" x-data="dashboard()">
+        <div class="w-full px-0 sm:px-2 py-2 sm:py-4 z-20" x-data="dashboard()">
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Dashboard</h1>
@@ -76,8 +76,8 @@
                             <i class="fa-solid fa-qrcode"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-900">Scan Visitor Pass</h3>
-                        <p class="text-slate-500 text-sm mt-1">Scan a tourist's digital exit pass to verify and log
-                            entry.</p>
+                        <p class="text-slate-500 text-sm mt-1">Scan a tourist's digital QR pass to verify and log
+                             entry.</p>
                     </div>
                 </button>
                 <button @click="openGenerator()"

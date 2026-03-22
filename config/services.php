@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'sarima' => [
+        'url' => env('SARIMA_API_URL', 'http://localhost:8000'),
+    ],
+
 ];
