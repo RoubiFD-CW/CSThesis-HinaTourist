@@ -21,14 +21,14 @@
     </style>
 </head>
 
-<body class="antialiased bg-white text-slate-800 min-h-screen flex flex-col justify-center py-6 sm:py-12"
+<body class="antialiased bg-white text-slate-800 min-h-screen flex flex-col justify-center py-2 sm:py-6"
     x-data="visitorPass()">
 
-    <div class="relative py-3 sm:max-w-xl sm:mx-auto w-full px-4">
-        <div class="relative px-4 py-10 bg-white shadow-2xl border border-slate-100 sm:rounded-3xl sm:p-10">
+    <div class="relative py-2 sm:max-w-xl sm:mx-auto w-full px-4">
+        <div class="relative px-4 py-6 bg-white shadow-2xl border border-slate-100 sm:rounded-3xl sm:px-10 sm:py-8">
 
             <div class="max-w-md mx-auto">
-                <div class="flex items-center gap-3 mb-6">
+                <div class="flex items-center gap-3 mb-4">
                     <div class="shrink-0">
                         <img src="{{ asset('hinatourist-logo.png') }}" class="w-12 h-12 object-contain" alt="Logo">
                     </div>
@@ -39,8 +39,9 @@
                 <div x-show="!generatedQR" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
                     <div class="divide-y divide-gray-200">
-                        <div class="py-4 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                            <h2 class="text-xl font-bold text-slate-800 mb-1" x-text="'Visitor Entry Pass for ' + spotName"></h2>
+                        <div class="py-2 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                            <h2 class="text-xl font-bold text-slate-800 mb-1"
+                                x-text="'Visitor Entry Pass for ' + spotName"></h2>
                             <p class="text-sm text-slate-500 mb-6">Please fill out this form to generate your entry
                                 pass.</p>
 
@@ -99,40 +100,61 @@
 
                                 <!-- Origin -->
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Where are you
-                                        from?</label>
-                                    <select x-model="form.origin" required
-                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
-                                        <option value="" disabled selected>Select origin...</option>
-                                        <template x-if="form.visitor_type === 'Local'">
-                                            <optgroup label="Local Options">
-                                                <option value="Within the province">Within the province</option>
-                                                <option value="Other province">Other province</option>
-                                            </optgroup>
-                                        </template>
-                                        <template x-if="form.visitor_type === 'Foreign Tourist'">
-                                            <optgroup label="Foreign Option">
-                                                <option value="Foreign country residence">Foreign country residence
-                                                </option>
-                                            </optgroup>
-                                        </template>
-                                    </select>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Where are you from?</label>
+                                    <div class="relative" x-data="{ 
+                                            open: false, 
+                                            options: { 'Local': ['Within the province', 'Other province'], 'Foreign Tourist': ['Foreign country residence'] }, 
+                                            selectOption(val) { form.origin = val; this.open = false; } 
+                                        }" 
+                                        @click.away="open = false">
+                                        <div @click="open = !open" tabindex="0"
+                                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 outline-none transition-all cursor-pointer flex justify-between items-center text-base">
+                                             <span x-text="form.origin || 'Select origin...'" :class="form.origin ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
+                                             <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]" :class="open ? 'rotate-180' : ''"></i>
+                                        </div>
+                                        <div x-show="open" x-transition.opacity.duration.200ms 
+                                             class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                             style="display: none;">
+                                            <template x-for="opt in options[form.visitor_type] || []" :key="opt">
+                                                <div @click="selectOption(opt)" 
+                                                     class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer text-sm text-slate-700 transition-colors" 
+                                                     :class="form.origin === opt ? 'bg-indigo-50 text-indigo-600 font-medium' : ''" 
+                                                     x-text="opt"></div>
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Reason -->
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Reason for
-                                        visit</label>
-                                    <select x-model="form.visit_reason"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
-                                        <option value="Vacation/Leisure">Vacation or Leisure</option>
-                                        <option value="Business">Business</option>
-                                        <option value="Other">Other reason</option>
-                                    </select>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Reason for visit</label>
+                                    <div class="relative" 
+                                        x-data="{ 
+                                            open: false, 
+                                            options: ['Vacation or Leisure', 'Business', 'Others'],
+                                            selectOption(val) { form.visit_reason = val; this.open = false; } 
+                                        }" 
+                                        @click.away="open = false">
+                                        <div @click="open = !open" tabindex="0"
+                                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 outline-none transition-all cursor-pointer flex justify-between items-center text-base">
+                                             <span x-text="form.visit_reason || 'Select reason...'" :class="form.visit_reason ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
+                                             <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]" :class="open ? 'rotate-180' : ''"></i>
+                                        </div>
+                                        <div x-show="open" x-transition.opacity.duration.200ms 
+                                             class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                             style="display: none;">
+                                            <template x-for="opt in options" :key="opt">
+                                                <div @click="selectOption(opt)" 
+                                                     class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer text-sm text-slate-700 transition-colors" 
+                                                     :class="form.visit_reason === opt ? 'bg-indigo-50 text-indigo-600 font-medium' : ''" 
+                                                     x-text="opt"></div>
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Other Reason Specify -->
-                                <div class="mb-4" x-show="form.visit_reason === 'Other'" x-transition>
+                                <div class="mb-4" x-show="form.visit_reason === 'Others'" x-transition>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Specify Reason</label>
                                     <input type="text" x-model="form.visit_reason_other" placeholder="Please specify"
                                         class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
@@ -198,7 +220,7 @@
                     male_count: '',
                     female_count: '',
                     origin: '',
-                    visit_reason: 'Vacation/Leisure',
+                    visit_reason: 'Vacation or Leisure',
                     visit_reason_other: '',
                     dedicated_area: '',
                     timestamp: ''
@@ -274,7 +296,7 @@
                     this.form.male_count = '';
                     this.form.female_count = '';
                     this.form.origin = '';
-                    this.form.visit_reason = 'Vacation/Leisure';
+                    this.form.visit_reason = 'Vacation or Leisure';
                     this.form.visit_reason_other = '';
                     this.errors = { male_count: '', female_count: '' };
                 }

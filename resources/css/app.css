@@ -8,22 +8,38 @@
 @theme {
     --font-heading: 'Playfair Display', serif;
     --font-ui: 'Outfit', sans-serif;
-    
-    --color-primary: #6366f1; /* Indigo-500 */
-    --color-secondary: #0f172a; /* Slate-900 */
-    
+
+    --color-primary: #6366f1;
+    /* Indigo-500 */
+    --color-secondary: #0f172a;
+    /* Slate-900 */
+
     --animate-fade-up: fadeUp 0.6s ease-out forwards;
     --animate-slide-in: slideIn 0.4s ease-out forwards;
 }
 
 @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 html {
@@ -35,6 +51,11 @@ body {
     @apply bg-slate-50 text-slate-900 antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-heading);
 }

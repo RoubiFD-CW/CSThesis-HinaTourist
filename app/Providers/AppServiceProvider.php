@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Schema::defaultStringLength(191);
+
+        if (str_starts_with(config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         $host = request()->getHost();
 
         // Ensure HTTPS on Ngrok or Forwarded Proxies

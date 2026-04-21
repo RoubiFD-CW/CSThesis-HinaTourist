@@ -31,10 +31,7 @@
     {{-- Mobile Header --}}
     <div class="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-20">
         <div class="flex items-center gap-2">
-            <div
-                class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#008080] to-[#006666] flex items-center justify-center text-white shadow-sm">
-                <i class="fa-solid fa-chart-column text-xs"></i>
-            </div>
+            <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
             <span class="font-bold text-slate-800">{{ config('app.name') }}</span>
         </div>
         <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-700 p-2">
@@ -43,14 +40,14 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 p-4 sm:p-8">
+    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 px-4 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-10">
         <div class="absolute inset-0 -z-10 pointer-events-none">
             <div class="absolute top-[15%] right-[10%] w-[35%] h-[35%] rounded-full bg-indigo-100/40 blur-[100px]">
             </div>
             <div class="absolute bottom-[10%] left-[5%] w-[30%] h-[30%] rounded-full bg-cyan-100/30 blur-[80px]"></div>
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4">
+        <div class="w-full px-0 sm:px-2 pt-0 pb-4">
             {{-- Page Header --}}
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
@@ -61,11 +58,13 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <form action="{{ route('admin.export.var2p') }}" method="GET" class="flex items-center gap-3">
-                        <div class="relative group" x-data="{ openYear: false, selectedYear: '{{ request('year', max(now()->year, 2026)) }}' }">
+                        <div class="relative group"
+                            x-data="{ openYear: false, selectedYear: '{{ request('year', max(now()->year, 2026)) }}' }">
                             <input type="hidden" name="year" :value="selectedYear">
                             <button type="button" @click="openYear = !openYear" @click.away="openYear = false"
                                 class="flex items-center gap-2 pl-4 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#008080]/50 hover:bg-slate-50 focus:ring-4 focus:ring-[#008080]/10 focus:border-[#008080] outline-none transition-all text-sm font-bold text-slate-700 shadow-sm cursor-pointer whitespace-nowrap">
-                                <i class="fa-solid fa-calendar-day text-slate-500 group-hover:text-[#008080] transition-colors"></i>
+                                <i
+                                    class="fa-solid fa-calendar-day text-slate-500 group-hover:text-[#008080] transition-colors"></i>
                                 <span x-text="selectedYear + ' Report'"></span>
                             </button>
                             <!-- Custom Dropdown -->
@@ -83,20 +82,23 @@
                                 </ul>
                             </div>
                         </div>
-                        <button type="submit" class="group px-5 py-2.5 rounded-xl bg-[#008080] hover:bg-[#006666] text-white font-semibold transition-all shadow-md shadow-[#008080]/20 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2 text-sm whitespace-nowrap">
+                        <button type="submit"
+                            class="group px-5 py-2.5 rounded-xl bg-[#008080] hover:bg-[#006666] text-white font-semibold transition-all shadow-md shadow-[#008080]/20 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2 text-sm whitespace-nowrap">
                             <i class="fa-solid fa-file-excel group-hover:scale-110 transition-transform"></i>
-                            Download VAR 2P (.xlsx)
+                            Download VAR 2P
                         </button>
                     </form>
                 </div>
             </div>
 
             {{-- ═══════════════════════════════════════════════ --}}
-            {{-- SECTION 1: Summary Stat Cards --}}
+            {{-- SECTION 1: Summary Stat Cards (Live Polling) --}}
             {{-- ═══════════════════════════════════════════════ --}}
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+            <div x-data="liveStats()" x-init="init()" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+
                 {{-- Today --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
@@ -105,11 +107,23 @@
                         <span
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Today</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['today']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.today ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.today)">{{ number_format($stats['today']) }}</span>
+                    <span x-show="flashing.today" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
 
                 {{-- This Month --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
@@ -118,11 +132,23 @@
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">This
                             Month</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['month']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.month ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.month)">{{ number_format($stats['month']) }}</span>
+                    <span x-show="flashing.month" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
 
                 {{-- Tourists --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
@@ -131,11 +157,23 @@
                         <span
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Tourists</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['tourist']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.tourist ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.tourist)">{{ number_format($stats['tourist']) }}</span>
+                    <span x-show="flashing.tourist" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
 
                 {{-- Locals --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
@@ -144,11 +182,23 @@
                         <span
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Locals</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['local']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.local ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.local)">{{ number_format($stats['local']) }}</span>
+                    <span x-show="flashing.local" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
 
                 {{-- Male --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
@@ -157,11 +207,23 @@
                         <span
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Male</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['total_male']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.total_male ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.total_male)">{{ number_format($stats['total_male']) }}</span>
+                    <span x-show="flashing.total_male" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
 
                 {{-- Female --}}
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div
+                    class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2.5 mb-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center shrink-0">
@@ -170,9 +232,65 @@
                         <span
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Female</span>
                     </div>
-                    <span class="text-2xl font-black text-slate-800">{{ number_format($stats['total_female']) }}</span>
+                    <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
+                        :class="flashing.total_female ? 'text-[#008080] scale-110' : ''"
+                        x-text="fmt(stats.total_female)">{{ number_format($stats['total_female']) }}</span>
+                    <span x-show="flashing.total_female" x-transition.opacity
+                        class="absolute top-2 right-2 flex items-center gap-1">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                        </span>
+                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                    </span>
                 </div>
             </div>
+
+            <script>
+                function liveStats() {
+                    return {
+                        stats: {
+                            today:        {{ $stats['today'] }},
+                            month:        {{ $stats['month'] }},
+                            tourist:      {{ $stats['tourist'] }},
+                            local:        {{ $stats['local'] }},
+                            total_male:   {{ $stats['total_male'] }},
+                            total_female: {{ $stats['total_female'] }},
+                        },
+                        // Plain object — Alpine can detect property mutations on this
+                        flashing: { today: false, month: false, tourist: false, local: false, total_male: false, total_female: false },
+                        _interval: null,
+
+                        fmt(n) {
+                            return Number(n).toLocaleString();
+                        },
+
+                        async poll() {
+                            try {
+                                const res = await fetch('/api/statistics/summary');
+                                if (!res.ok) return;
+                                const fresh = await res.json();
+                                Object.keys(fresh).forEach(k => {
+                                    if (fresh[k] !== this.stats[k]) {
+                                        this.stats[k] = fresh[k];
+                                        // Light up THIS card — Alpine watches the property change
+                                        this.flashing[k] = true;
+                                        setTimeout(() => { this.flashing[k] = false; }, 2000);
+                                    }
+                                });
+                            } catch (e) { /* silently ignore network blips */ }
+                        },
+
+                        init() {
+                            // Poll every 3 seconds for near-real-time updates
+                            this._interval = setInterval(() => this.poll(), 3000);
+                        },
+                    };
+                }
+            </script>
+
+
 
             {{-- ═══════════════════════════════════════════════ --}}
             {{-- SECTION 2: Monthly Trend Line Chart --}}
@@ -272,20 +390,19 @@
             {{-- ═══════════════════════════════════════════════ --}}
             {{-- SECTION 4: Detailed Area Breakdown (Dynamic) --}}
             {{-- ═══════════════════════════════════════════════ --}}
-            <div
-                x-data="areaBreakdown()"
-                x-init="init()"
-                class="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-8"
-            >
+            <div x-data="areaBreakdown()" x-init="init()"
+                class="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                 {{-- ── Panel Header ── --}}
                 <div class="p-5 sm:p-6 border-b border-slate-100">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-base shadow-inner shrink-0">
+                            <div
+                                class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-base shadow-inner shrink-0">
                                 <i class="fa-solid fa-table-list"></i>
                             </div>
                             <div>
-                                <h2 class="text-base font-bold text-slate-800 leading-tight">Detailed Area Breakdown</h2>
+                                <h2 class="text-base font-bold text-slate-800 leading-tight">Detailed Area Breakdown
+                                </h2>
                                 <p class="text-xs text-slate-400 mt-0.5">Per-destination visitor statistics by day</p>
                             </div>
                         </div>
@@ -293,7 +410,8 @@
                         {{-- Sync Status Indicator --}}
                         <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
                             <template x-if="lastSync">
-                                <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
+                                <div
+                                    class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
                                     <!-- <span class="relative flex h-2 w-2 shrink-0">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
                                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -304,11 +422,13 @@
                                 </div>
                             </template>
                             <template x-if="!lastSync">
-                                <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
+                                <div
+                                    class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
                                     <span class="relative flex h-2 w-2 shrink-0">
                                         <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-300"></span>
                                     </span>
-                                    <span class="text-[11px] font-medium text-slate-400 tracking-tight">No sync data</span>
+                                    <span class="text-[11px] font-medium text-slate-400 tracking-tight">No sync
+                                        data</span>
                                 </div>
                             </template>
                         </div>
@@ -320,19 +440,16 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             {{-- Year stepper --}}
                             <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1 shrink-0">
-                                <button
-                                    @click="if(selectedYear > 2024){ selectedYear--; fetchDays(); }"
+                                <button @click="if(selectedYear > 2024){ selectedYear--; fetchDays(); }"
                                     class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-sm transition-all text-xs"
-                                    title="Previous year"
-                                >
+                                    title="Previous year">
                                     <i class="fa-solid fa-chevron-left"></i>
                                 </button>
-                                <span class="text-sm font-black text-slate-700 px-2 select-none" x-text="selectedYear"></span>
-                                <button
-                                    @click="if(selectedYear < currentYear){ selectedYear++; fetchDays(); }"
+                                <span class="text-sm font-black text-slate-700 px-2 select-none"
+                                    x-text="selectedYear"></span>
+                                <button @click="if(selectedYear < currentYear){ selectedYear++; fetchDays(); }"
                                     class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-sm transition-all text-xs"
-                                    title="Next year"
-                                >
+                                    title="Next year">
                                     <i class="fa-solid fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -340,62 +457,48 @@
                             {{-- Month buttons --}}
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <template x-for="(mName, mIdx) in monthNames" :key="mIdx">
-                                    <button
-                                        @click="selectMonth(mIdx + 1)"
-                                        :class="selectedMonth === (mIdx + 1)
+                                    <button @click="selectMonth(mIdx + 1)" :class="selectedMonth === (mIdx + 1)
                                             ? 'bg-[#008080] text-white shadow-md shadow-[#008080]/20 ring-0'
                                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'"
                                         class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap"
-                                        x-text="mName"
-                                    ></button>
+                                        x-text="mName"></button>
                                 </template>
                             </div>
                         </div>
                     </div>
 
                     {{-- ── Secondary nav: Day Picker ── --}}
-                    <div
-                        x-show="availableDays.length > 0"
-                        x-transition:enter="transition ease-out duration-300"
+                    <div x-show="availableDays.length > 0" x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 -translate-y-2"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        class="mt-3 pt-3 border-t border-slate-100"
-                    >
+                        x-transition:enter-end="opacity-100 translate-y-0" class="mt-3 pt-3 border-t border-slate-100">
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                             Select Day —
-                            <span class="normal-case font-medium text-slate-500" x-text="monthNames[selectedMonth-1] + ' ' + selectedYear"></span>
+                            <span class="normal-case font-medium text-slate-500"
+                                x-text="monthNames[selectedMonth-1] + ' ' + selectedYear"></span>
                         </p>
                         <div class="flex items-center gap-1.5 flex-wrap">
                             {{-- "All Days" pill --}}
-                            <button
-                                @click="selectDay(null)"
-                                :class="selectedDay === null
+                            <button @click="selectDay(null)" :class="selectedDay === null
                                     ? 'bg-indigo-600 text-white shadow-sm'
                                     : 'bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600'"
-                                class="px-3 py-1 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap"
-                            >All</button>
+                                class="px-3 py-1 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap">All</button>
 
                             <template x-for="d in availableDays" :key="d">
-                                <button
-                                    @click="selectDay(d)"
-                                    :class="selectedDay === d
+                                <button @click="selectDay(d)" :class="selectedDay === d
                                         ? 'bg-indigo-600 text-white shadow-sm'
                                         : 'bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600'"
                                     class="w-9 h-8 rounded-lg text-xs font-semibold transition-all duration-150"
-                                    x-text="d"
-                                ></button>
+                                    x-text="d"></button>
                             </template>
                         </div>
                     </div>
 
                     {{-- Empty days notice --}}
-                    <div
-                        x-show="!daysLoading && availableDays.length === 0"
-                        x-transition.opacity
-                        class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400 flex items-center gap-2"
-                    >
+                    <div x-show="!daysLoading && availableDays.length === 0" x-transition.opacity
+                        class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400 flex items-center gap-2">
                         <i class="fa-regular fa-calendar-xmark text-slate-300"></i>
-                        No log entries found for <span class="font-semibold" x-text="monthNames[selectedMonth-1] + ' ' + selectedYear"></span>.
+                        No log entries found for <span class="font-semibold"
+                            x-text="monthNames[selectedMonth-1] + ' ' + selectedYear"></span>.
                     </div>
                 </div>
 
@@ -419,16 +522,13 @@
                     <div class="px-5 sm:px-6 pt-4 pb-1 flex items-center justify-between flex-wrap gap-2">
                         <p class="text-xs font-semibold text-slate-500">
                             Showing results for
-                            <span class="text-slate-800 font-bold"
-                                x-text="selectedDay
+                            <span class="text-slate-800 font-bold" x-text="selectedDay
                                     ? monthNames[selectedMonth-1] + ' ' + selectedDay + ', ' + selectedYear + ' (24-hr window)'
-                                    : monthNames[selectedMonth-1] + ' ' + selectedYear + ' (Full month)'"
-                            ></span>
+                                    : monthNames[selectedMonth-1] + ' ' + selectedYear + ' (Full month)'"></span>
                         </p>
                         <span
                             class="text-[11px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full"
-                            x-text="tableRows.length + ' spot' + (tableRows.length !== 1 ? 's' : '')"
-                        ></span>
+                            x-text="tableRows.length + ' spot' + (tableRows.length !== 1 ? 's' : '')"></span>
                     </div>
 
                     {{-- Mobile cards --}}
@@ -439,29 +539,43 @@
                                     <p class="font-bold text-slate-900 mb-2" x-text="row.dedicated_area"></p>
                                     <div class="grid grid-cols-3 gap-2 text-sm">
                                         <div class="bg-slate-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-slate-400 uppercase font-bold">Total</span>
-                                            <span class="font-black text-slate-800" x-text="Intl.NumberFormat().format(row.total_visitors)"></span>
+                                            <span
+                                                class="block text-[10px] text-slate-400 uppercase font-bold">Total</span>
+                                            <span class="font-black text-slate-800"
+                                                x-text="Intl.NumberFormat().format(row.total_visitors)"></span>
                                         </div>
                                         <div class="bg-sky-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-sky-400 uppercase font-bold">Tourists</span>
-                                            <span class="font-black text-sky-700" x-text="Intl.NumberFormat().format(row.tourists)"></span>
+                                            <span
+                                                class="block text-[10px] text-sky-400 uppercase font-bold">Tourists</span>
+                                            <span class="font-black text-sky-700"
+                                                x-text="Intl.NumberFormat().format(row.tourists)"></span>
                                         </div>
                                         <div class="bg-rose-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-rose-400 uppercase font-bold">Locals</span>
-                                            <span class="font-black text-rose-700" x-text="Intl.NumberFormat().format(row.locals)"></span>
+                                            <span
+                                                class="block text-[10px] text-rose-400 uppercase font-bold">Locals</span>
+                                            <span class="font-black text-rose-700"
+                                                x-text="Intl.NumberFormat().format(row.locals)"></span>
                                         </div>
                                         <div class="bg-blue-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-blue-400 uppercase font-bold">Male</span>
-                                            <span class="font-black text-blue-700" x-text="Intl.NumberFormat().format(row.males)"></span>
+                                            <span
+                                                class="block text-[10px] text-blue-400 uppercase font-bold">Male</span>
+                                            <span class="font-black text-blue-700"
+                                                x-text="Intl.NumberFormat().format(row.males)"></span>
                                         </div>
                                         <div class="bg-pink-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-pink-400 uppercase font-bold">Female</span>
-                                            <span class="font-black text-pink-700" x-text="Intl.NumberFormat().format(row.females)"></span>
+                                            <span
+                                                class="block text-[10px] text-pink-400 uppercase font-bold">Female</span>
+                                            <span class="font-black text-pink-700"
+                                                x-text="Intl.NumberFormat().format(row.females)"></span>
                                         </div>
                                         <div class="bg-emerald-50 rounded-lg p-2 text-center">
-                                            <span class="block text-[10px] text-emerald-400 uppercase font-bold">Entries</span>
-                                            <span class="font-black text-emerald-700" x-text="Intl.NumberFormat().format(row.total_entries)"></span>
-                                            <span x-show="row.spot_last_sync" class="block text-[9px] text-slate-400 font-normal mt-0.5" x-text="'Last sync: ' + row.spot_last_sync"></span>
+                                            <span
+                                                class="block text-[10px] text-emerald-400 uppercase font-bold">Entries</span>
+                                            <span class="font-black text-emerald-700"
+                                                x-text="Intl.NumberFormat().format(row.total_entries)"></span>
+                                            <span x-show="row.spot_last_sync"
+                                                class="block text-[9px] text-slate-400 font-normal mt-0.5"
+                                                x-text="'Last sync: ' + row.spot_last_sync"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -479,50 +593,57 @@
                     <div class="hidden lg:block overflow-x-auto mt-2">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                <tr
+                                    class="bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-100">
                                     <th class="px-5 py-3 font-semibold">Tourist Spot</th>
                                     <th class="px-5 py-3 font-semibold text-center">Total</th>
                                     <th class="px-5 py-3 font-semibold text-center">Tourists</th>
                                     <th class="px-5 py-3 font-semibold text-center">Locals</th>
                                     <th class="px-5 py-3 font-semibold text-center">Male</th>
                                     <th class="px-5 py-3 font-semibold text-center">Female</th>
-                                    <th class="px-5 py-3 font-semibold text-center uppercase tracking-wider text-[11px]">Log Entries</th>
+                                    <th
+                                        class="px-5 py-3 font-semibold text-center uppercase tracking-wider text-[11px]">
+                                        Log Entries</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 <template x-if="tableRows.length > 0">
                                     <template x-for="(row, idx) in tableRows" :key="row.dedicated_area">
-                                        <tr
-                                            class="hover:bg-slate-50/60 transition-colors group"
-                                        >
+                                        <tr class="hover:bg-slate-50/60 transition-colors group">
                                             <td class="px-5 py-3.5">
                                                 <div class="flex items-center gap-3">
                                                     <div
-                                                        class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center shrink-0 text-xs font-bold transition-transform group-hover:scale-110"
-                                                    >
+                                                        class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center shrink-0 text-xs font-bold transition-transform group-hover:scale-110">
                                                         <i class="fa-solid fa-location-dot"></i>
                                                     </div>
-                                                    <span class="font-semibold text-slate-800 text-sm" x-text="row.dedicated_area"></span>
+                                                    <span class="font-semibold text-slate-800 text-sm"
+                                                        x-text="row.dedicated_area"></span>
                                                 </div>
                                             </td>
                                             <td class="px-5 py-3.5 text-center">
-                                                <span class="font-black text-slate-800 text-sm" x-text="Intl.NumberFormat().format(row.total_visitors)"></span>
+                                                <span class="font-black text-slate-800 text-sm"
+                                                    x-text="Intl.NumberFormat().format(row.total_visitors)"></span>
                                             </td>
                                             <td class="px-5 py-3.5 text-center">
-                                                <span class="inline-block bg-sky-50 text-sky-700 font-bold text-xs px-2.5 py-1 rounded-full" x-text="Intl.NumberFormat().format(row.tourists)"></span>
-                                            </td>
-                                            <td class="px-5 py-3.5 text-center">
-                                                <span class="inline-block bg-rose-50 text-rose-700 font-bold text-xs px-2.5 py-1 rounded-full" x-text="Intl.NumberFormat().format(row.locals)"></span>
-                                            </td>
-                                            <td class="px-5 py-3.5 text-center text-blue-600 font-semibold text-sm" x-text="Intl.NumberFormat().format(row.males)"></td>
-                                            <td class="px-5 py-3.5 text-center text-pink-600 font-semibold text-sm" x-text="Intl.NumberFormat().format(row.females)"></td>
-                                            <td class="px-5 py-3.5 text-center">
-                                                <span class="block font-bold text-slate-700 text-sm" x-text="Intl.NumberFormat().format(row.total_entries)"></span>
                                                 <span
-                                                    x-show="row.spot_last_sync"
+                                                    class="inline-block bg-sky-50 text-sky-700 font-bold text-xs px-2.5 py-1 rounded-full"
+                                                    x-text="Intl.NumberFormat().format(row.tourists)"></span>
+                                            </td>
+                                            <td class="px-5 py-3.5 text-center">
+                                                <span
+                                                    class="inline-block bg-rose-50 text-rose-700 font-bold text-xs px-2.5 py-1 rounded-full"
+                                                    x-text="Intl.NumberFormat().format(row.locals)"></span>
+                                            </td>
+                                            <td class="px-5 py-3.5 text-center text-blue-600 font-semibold text-sm"
+                                                x-text="Intl.NumberFormat().format(row.males)"></td>
+                                            <td class="px-5 py-3.5 text-center text-pink-600 font-semibold text-sm"
+                                                x-text="Intl.NumberFormat().format(row.females)"></td>
+                                            <td class="px-5 py-3.5 text-center">
+                                                <span class="block font-bold text-slate-700 text-sm"
+                                                    x-text="Intl.NumberFormat().format(row.total_entries)"></span>
+                                                <span x-show="row.spot_last_sync"
                                                     class="block text-[10px] text-slate-400 font-medium mt-1 tracking-tight"
-                                                    x-text="'(Last sync: ' + row.spot_last_sync + ')'"
-                                                ></span>
+                                                    x-text="'(Last sync: ' + row.spot_last_sync + ')'"></span>
                                             </td>
                                         </tr>
                                     </template>
@@ -626,8 +747,15 @@
                                         x-text="spot.name_formatted"></h3>
                                 </div>
                                 <div class="flex items-center gap-1.5 mb-2 flex-wrap">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" :class="getMapeColor(spot.mape)" x-text="'MAPE ' + spot.mape + '%'"></span>
-                                    <span class="text-[10px] text-slate-500" x-text="'· ' + spot.mape_interpretation"></span>
+                                    <template x-if="spot.isFallback">
+                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                            <i class="fa-solid fa-shield-halved"></i> FALLBACK ACTIVE
+                                        </span>
+                                    </template>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                        :class="getMapeColor(spot.mape)" x-text="'MAPE ' + spot.mape + '%'"></span>
+                                    <span class="text-[10px] text-slate-500"
+                                        x-text="'· ' + spot.mape_interpretation"></span>
                                 </div>
                                 <div class="flex items-baseline gap-2">
                                     <span class="text-3xl font-black text-white"
@@ -676,7 +804,8 @@
                     <div x-show="!loading && !error && forecasts.length > 0" x-cloak class="mt-8">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-violet-500/20 text-violet-400 flex items-center justify-center text-lg">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-violet-500/20 text-violet-400 flex items-center justify-center text-lg">
                                     <i class="fa-solid fa-magnifying-glass-chart"></i>
                                 </div>
                                 <div>
@@ -688,10 +817,12 @@
                                 <select x-model="selectedSpotIndex" @change="$nextTick(() => buildForecastChart())"
                                     class="w-full sm:w-auto bg-white/10 border border-white/20 text-white text-xs rounded-xl px-4 py-2.5 hover:bg-white/20 focus:ring-2 focus:ring-violet-500 focus:outline-none appearance-none pr-10 cursor-pointer transition-colors backdrop-blur-sm font-semibold">
                                     <template x-for="(spot, idx) in rankedForecasts" :key="idx">
-                                        <option :value="idx" x-text="spot.name_formatted" class="text-slate-900"></option>
+                                        <option :value="idx" x-text="spot.name_formatted" class="text-slate-900">
+                                        </option>
                                     </template>
                                 </select>
-                                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-[10px] pointer-events-none"></i>
+                                <i
+                                    class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-[10px] pointer-events-none"></i>
                             </div>
                         </div>
 
@@ -714,39 +845,46 @@
                         </div>
 
                         {{-- Chart Tab --}}
-                        <div x-show="activeInsightsTab === 'chart'" 
-                             x-transition:enter="transition ease-out duration-500 delay-100"
-                             x-transition:enter-start="opacity-0 translate-y-4"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
-                             class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                        <div x-show="activeInsightsTab === 'chart'"
+                            x-transition:enter="transition ease-out duration-500 delay-100"
+                            x-transition:enter-start="opacity-0 translate-y-4"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="bg-white/5 border border-white/10 rounded-2xl p-5">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h4 class="text-sm font-bold text-white">12-Month Forecast with Confidence Band</h4>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">Shaded area represents 95% confidence interval</p>
+                                    <h4 class="text-sm font-bold text-white">Actual vs Predicted Comparison</h4>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Historical actual data compared against
+                                        model predictions</p>
                                 </div>
-                                <div class="flex items-center gap-4 text-[10px] text-slate-400">
-                                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-[#008080] rounded-full inline-block"></span> Predicted</span>
-                                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-[#008080]/20 rounded inline-block border border-indigo-400/30"></span> 95% CI</span>
+                                <div class="flex items-center gap-4 text-[10px] text-slate-400 flex-wrap">
+                                    <span class="flex items-center gap-1.5"><span
+                                            class="w-3 h-0.5 bg-[#F59E0B] rounded-full inline-block"></span> Actual
+                                        Data</span>
+                                    <span class="flex items-center gap-1.5"><span
+                                            class="w-3 h-0.5 bg-[#4ADE80] rounded-full inline-block"
+                                            style="border-bottom: 2px dashed #4ADE80;"></span> Predicted</span>
+                                    <span class="flex items-center gap-1.5"><span
+                                            class="w-3 h-3 bg-[#4ADE80]/20 rounded inline-block border border-emerald-400/30"></span>
+                                        95% CI</span>
                                 </div>
                             </div>
                             <div style="height: 300px;"><canvas id="forecastInsightChart"></canvas></div>
                         </div>
 
                         {{-- Seasonal Patterns Tab --}}
-                        <div x-show="activeInsightsTab === 'seasonal'" 
-                             x-transition:enter="transition ease-out duration-500 delay-100"
-                             x-transition:enter-start="opacity-0 translate-y-4"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
-                             class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                        <div x-show="activeInsightsTab === 'seasonal'"
+                            x-transition:enter="transition ease-out duration-500 delay-100"
+                            x-transition:enter-start="opacity-0 translate-y-4"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="bg-white/5 border border-white/10 rounded-2xl p-5">
                             <h4 class="text-sm font-bold text-white mb-4">Monthly Seasonal Classification</h4>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                <template x-for="item in (rankedForecasts[selectedSpotIndex]?.seasonal_analysis || [])" :key="item.month">
+                                <template x-for="item in (rankedForecasts[selectedSpotIndex]?.seasonal_analysis || [])"
+                                    :key="item.month">
                                     <div class="rounded-xl p-3 border transition-all"
                                         :class="item.classification === 'Peak Season' ? 'bg-emerald-500/15 border-emerald-500/30' : (item.classification === 'Regular Season' ? 'bg-amber-500/10 border-amber-500/20' : 'bg-slate-500/10 border-slate-500/20')">
                                         <div class="flex items-center justify-between mb-2">
@@ -755,25 +893,28 @@
                                                 :class="item.classification === 'Peak Season' ? 'bg-emerald-500/30 text-emerald-300' : (item.classification === 'Regular Season' ? 'bg-amber-500/30 text-amber-300' : 'bg-slate-500/30 text-slate-400')"
                                                 x-text="item.classification"></span>
                                         </div>
-                                        <div class="text-lg font-black text-white" x-text="Intl.NumberFormat().format(item.average_visitors)"></div>
-                                        <div class="text-[10px] text-slate-400 mt-1 leading-snug" x-text="item.associated_holidays"></div>
+                                        <div class="text-lg font-black text-white"
+                                            x-text="Intl.NumberFormat().format(getPredictedForMonth(item.month, rankedForecasts[selectedSpotIndex]))">
+                                        </div>
+                                        <div class="text-[10px] text-slate-400 mt-1 leading-snug"
+                                            x-text="item.associated_holidays"></div>
                                     </div>
                                 </template>
                             </div>
                         </div>
 
                         {{-- Peak Seasons Tab --}}
-                        <div x-show="activeInsightsTab === 'peaks'" 
-                             x-transition:enter="transition ease-out duration-500 delay-100"
-                             x-transition:enter-start="opacity-0 translate-y-4"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
-                             class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                        <div x-show="activeInsightsTab === 'peaks'"
+                            x-transition:enter="transition ease-out duration-500 delay-100"
+                            x-transition:enter-start="opacity-0 translate-y-4"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="bg-white/5 border border-white/10 rounded-2xl p-5">
                             <h4 class="text-sm font-bold text-white mb-4">Top 3 Peak Months</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <template x-for="peak in (rankedForecasts[selectedSpotIndex]?.peak_seasons || [])" :key="peak.rank">
+                                <template x-for="peak in (rankedForecasts[selectedSpotIndex]?.peak_seasons || [])"
+                                    :key="peak.rank">
                                     <div class="relative rounded-2xl p-5 border overflow-hidden"
                                         :class="peak.rank === 1 ? 'bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-amber-500/30' : (peak.rank === 2 ? 'bg-gradient-to-br from-slate-400/10 to-slate-500/5 border-slate-400/20' : 'bg-gradient-to-br from-amber-700/15 to-amber-800/5 border-amber-700/20')">
                                         <div class="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center font-black text-lg"
@@ -781,15 +922,21 @@
                                             <span x-text="'#' + peak.rank"></span>
                                         </div>
                                         <div class="mb-3">
-                                            <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Peak Month</span>
+                                            <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Peak
+                                                Month</span>
                                             <h5 class="text-xl font-black text-white mt-1" x-text="peak.month"></h5>
                                         </div>
-                                        <div class="text-2xl font-black text-white mb-1" x-text="Intl.NumberFormat().format(peak.average_visitors)"></div>
-                                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Avg Visitors</span>
+                                        <div class="text-2xl font-black text-white mb-1"
+                                            x-text="Intl.NumberFormat().format(getPredictedForMonth(peak.month, rankedForecasts[selectedSpotIndex]))">
+                                        </div>
+                                        <span
+                                            class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Expected
+                                            Visitors</span>
                                         <div class="mt-3 pt-3 border-t border-white/10">
                                             <div class="flex items-start gap-2">
                                                 <i class="fa-solid fa-calendar-star text-amber-400 text-xs mt-0.5"></i>
-                                                <span class="text-xs text-slate-300 leading-relaxed" x-text="peak.associated_holidays"></span>
+                                                <span class="text-xs text-slate-300 leading-relaxed"
+                                                    x-text="peak.associated_holidays"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -842,10 +989,14 @@
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Model Accuracy (MAPE)</p>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                            Model Accuracy (MAPE)</p>
                                         <div class="flex items-baseline gap-2">
-                                            <span class="text-3xl font-black text-white" x-text="modalSpot.mape + '%'"></span>
-                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full" :class="getMapeColor(modalSpot.mape)" x-text="modalSpot.mape_interpretation"></span>
+                                            <span class="text-3xl font-black text-white"
+                                                x-text="modalSpot.mape + '%'"></span>
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full"
+                                                :class="getMapeColor(modalSpot.mape)"
+                                                x-text="modalSpot.mape_interpretation"></span>
                                         </div>
                                     </div>
                                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
@@ -858,23 +1009,29 @@
                             {{-- Predicted + Confidence Interval --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Expected Visitors</p>
-                                    <span class="text-3xl font-black text-white" x-text="Intl.NumberFormat().format(modalSpot.predicted)"></span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                        Expected Visitors</p>
+                                    <span class="text-3xl font-black text-white"
+                                        x-text="Intl.NumberFormat().format(modalSpot.predicted)"></span>
                                 </div>
                                 <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">95% Confidence Interval</p>
-                                    <span class="text-lg font-black text-[#008080]" x-text="modalSpot.confidence_text"></span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">95%
+                                        Confidence Interval</p>
+                                    <span class="text-lg font-black text-[#008080]"
+                                        x-text="modalSpot.confidence_text"></span>
                                 </div>
                             </div>
 
                             {{-- Seasonal Mini Heatmap --}}
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Season Overview</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Season
+                                    Overview</p>
                                 <div class="grid grid-cols-6 gap-1.5">
                                     <template x-for="item in (modalSpot.seasonal_analysis || [])" :key="item.month">
                                         <div class="rounded-lg p-2 text-center"
                                             :class="item.classification === 'Peak Season' ? 'bg-emerald-500/20' : (item.classification === 'Regular Season' ? 'bg-amber-500/15' : 'bg-slate-500/15')">
-                                            <span class="text-[9px] font-bold text-white block" x-text="item.month.substring(0, 3)"></span>
+                                            <span class="text-[9px] font-bold text-white block"
+                                                x-text="item.month.substring(0, 3)"></span>
                                             <span class="text-[8px] mt-0.5 block"
                                                 :class="item.classification === 'Peak Season' ? 'text-emerald-400' : (item.classification === 'Regular Season' ? 'text-amber-400' : 'text-slate-500')"
                                                 x-text="item.classification === 'Peak Season' ? '▲ Peak' : (item.classification === 'Regular Season' ? '● Regular' : '▼ Low')"></span>
@@ -885,7 +1042,8 @@
 
                             {{-- Top Peak Months --}}
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Top Peak Months</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Top Peak
+                                    Months</p>
                                 <div class="space-y-2">
                                     <template x-for="peak in (modalSpot.peak_seasons || [])" :key="peak.rank">
                                         <div class="flex items-center gap-3 bg-white/5 rounded-xl p-3">
@@ -895,7 +1053,8 @@
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <span class="text-sm font-bold text-white" x-text="peak.month"></span>
-                                                <span class="text-xs text-slate-400 ml-2" x-text="Intl.NumberFormat().format(peak.average_visitors) + ' avg'"></span>
+                                                <span class="text-xs text-slate-400 ml-2"
+                                                    x-text="Intl.NumberFormat().format(getPredictedForMonth(peak.month, modalSpot.fullData)) + ' expected'"></span>
                                             </div>
                                         </div>
                                     </template>
@@ -906,14 +1065,16 @@
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
                                 <div class="flex items-center gap-2 mb-3">
                                     <i class="text-lg" :class="modalSpot.actionIcon"></i>
-                                    <h4 class="text-sm font-bold text-white uppercase tracking-wider">Recommended Action</h4>
+                                    <h4 class="text-sm font-bold text-white uppercase tracking-wider">Recommended Action
+                                    </h4>
                                 </div>
                                 <p class="text-sm text-slate-200 leading-relaxed" x-text="modalSpot.actionText"></p>
                             </div>
 
                             {{-- Priority Level --}}
                             <div class="flex items-center gap-3">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Priority Level:</span>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Priority
+                                    Level:</span>
                                 <span class="text-xs font-bold px-3 py-1 rounded-full"
                                     :class="modalSpot.rank <= 2 ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : (modalSpot.rank <= 5 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-sky-500/20 text-sky-400 border border-sky-500/30')"
                                     x-text="modalSpot.rank <= 2 ? 'HIGH — Critical' : (modalSpot.rank <= 5 ? 'MEDIUM — Moderate' : 'LOW — Growth Opportunity')"></span>
@@ -949,6 +1110,7 @@
                 selectedSpotIndex: 0,
                 activeInsightsTab: 'chart',
                 forecastChartInstance: null,
+                fallbackActive: false, // UI flag for the whole system
                 // Fallback list — used only if /attractions endpoint is unreachable
                 fallbackSpots: [
                     'ENCHANTED RIVER',
@@ -993,8 +1155,14 @@
                         name: spot.name_formatted, rank: index + 1, predicted: spot.total_predicted,
                         actionText: action.text, actionIcon: action.icon,
                         mape: spot.mape || 0, mape_interpretation: spot.mape_interpretation || '',
+                        sarima_order: spot.sarima_order || 'SARIMA(1,1,1)x(1,1,0)12',
                         confidence_text: spot.confidence_text || '',
-                        seasonal_analysis: spot.seasonal_analysis || [], peak_seasons: spot.peak_seasons || []
+                        seasonal_analysis: spot.seasonal_analysis || [], peak_seasons: spot.peak_seasons || [],
+                        historical_yearly: spot.historical_yearly || [],
+                        fullData: spot,
+                        historical_monthly: spot.historical_monthly || [],
+                        historical_test: spot.historical_test || [],
+                        test_predicted: spot.test_predicted || []
                     };
                     this.showSpotModal = true;
                 },
@@ -1012,14 +1180,64 @@
                             const md = spot.raw_forecasts.find(m => m.month === this.selectedMonth);
                             if (md) { total = md.predicted_visitors; ciLower = md.confidence_interval_lower; ciUpper = md.confidence_interval_upper; }
                         }
-                        return { ...spot, total_predicted: total, ci_lower: ciLower, ci_upper: ciUpper,
-                            confidence_text: Intl.NumberFormat().format(ciLower) + ' – ' + Intl.NumberFormat().format(ciUpper) };
+                        return {
+                            ...spot, total_predicted: total, ci_lower: ciLower, ci_upper: ciUpper,
+                            confidence_text: Intl.NumberFormat().format(ciLower) + ' – ' + Intl.NumberFormat().format(ciUpper)
+                        };
                     }).sort((a, b) => b.total_predicted - a.total_predicted);
                 },
 
                 formatMonth(monthStr) {
                     const date = new Date(monthStr + '-01');
-                    return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
+                    return new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+                },
+
+                getPredictedForMonth(monthName, spotData) {
+                    if (!spotData || !spotData.raw_forecasts) return 0;
+                    const monthMap = { 'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12 };
+                    const mNum = monthMap[monthName];
+                    if (!mNum) return 0;
+                    const found = spotData.raw_forecasts.find(f => {
+                        const d = new Date(f.month + (f.month.length === 7 ? '-01' : ''));
+                        return (d.getMonth() + 1) === mNum;
+                    });
+                    return found ? found.predicted_visitors : 0;
+                },
+
+                calculateSeasonalMean(historicalData) {
+                    if (!historicalData || historicalData.length === 0) return [];
+                    
+                    // Group by month (0-11)
+                    const monthlyGroups = {};
+                    historicalData.forEach(h => {
+                        const d = new Date(h.month);
+                        const m = d.getMonth();
+                        if (!monthlyGroups[m]) monthlyGroups[m] = [];
+                        monthlyGroups[m].push(h.visitors);
+                    });
+
+                    // Forecast for the next 12 months starting from next month
+                    const results = [];
+                    const now = new Date();
+                    for (let i = 1; i <= 12; i++) {
+                        const targetDate = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                        const m = targetDate.getMonth();
+                        const year = targetDate.getFullYear();
+                        const monthStr = `${year}-${String(m + 1).padStart(2, '0')}`;
+                        
+                        const values = monthlyGroups[m] || [];
+                        const mean = values.length > 0 
+                            ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+                            : 0;
+                        
+                        results.push({
+                            month: monthStr,
+                            predicted_visitors: mean,
+                            confidence_interval_lower: Math.max(0, Math.round(mean * 0.8)),
+                            confidence_interval_upper: Math.round(mean * 1.2)
+                        });
+                    }
+                    return results;
                 },
 
                 buildForecastChart() {
@@ -1028,30 +1246,78 @@
                     if (this.forecastChartInstance) this.forecastChartInstance.destroy();
                     const spot = this.rankedForecasts[this.selectedSpotIndex];
                     if (!spot) return;
-                    const labels = spot.raw_forecasts.map(f => { const d = new Date(f.month + '-01'); return new Intl.DateTimeFormat('en-US', { month: 'short', year: '2-digit' }).format(d); });
-                    const predicted = spot.raw_forecasts.map(f => f.predicted_visitors);
-                    const lower = spot.raw_forecasts.map(f => f.confidence_interval_lower);
-                    const upper = spot.raw_forecasts.map(f => f.confidence_interval_upper);
+
+                    let labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    let actuals = new Array(12).fill(null);
+                    let predicted = new Array(12).fill(null);
+                    let lower = new Array(12).fill(null);
+                    let upper = new Array(12).fill(null);
+
+                    // 1. Plot Actual Data (strictly 2025)
+                    if (spot.historical_monthly) {
+                        spot.historical_monthly.forEach(h => {
+                            const d = new Date(h.month);
+                            if (d.getFullYear() === 2025) {
+                                actuals[d.getMonth()] = h.visitors;
+                            }
+                        });
+                    }
+                    if (spot.historical_test && spot.historical_test.length > 0) {
+                        spot.historical_test.forEach(h => {
+                            const d = new Date(h.month);
+                            if (d.getFullYear() === 2025) {
+                                actuals[d.getMonth()] = h.visitors;
+                            }
+                        });
+                    }
+
+                    // 2. Plot Predicted Data (Jan-Dec of forecast)
+                    if (spot.raw_forecasts) {
+                        spot.raw_forecasts.forEach(f => {
+                            const d = new Date(f.month + '-01');
+                            const monthIdx = d.getMonth();
+                            predicted[monthIdx] = f.predicted_visitors;
+                            lower[monthIdx] = f.confidence_interval_lower;
+                            upper[monthIdx] = f.confidence_interval_upper;
+                        });
+                    }
+
                     this.forecastChartInstance = new Chart(canvas.getContext('2d'), {
                         type: 'line',
                         data: {
                             labels,
                             datasets: [
-                                { label: 'Upper Bound', data: upper, borderColor: 'rgba(0,128,128,0.3)', backgroundColor: 'rgba(0,128,128,0.12)', fill: '+1', pointRadius: 0, tension: 0.4, borderWidth: 1, borderDash: [4, 4], order: 2 },
-                                { label: 'Predicted Visitors', data: predicted, borderColor: '#008080', backgroundColor: 'rgba(0,128,128,0.08)', borderWidth: 3, pointRadius: 5, pointHoverRadius: 8, pointBackgroundColor: '#004d4d', pointBorderColor: '#008080', pointBorderWidth: 2, tension: 0.4, fill: false, order: 1 },
-                                { label: 'Lower Bound', data: lower, borderColor: 'rgba(0,128,128,0.3)', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.4, borderWidth: 1, borderDash: [4, 4], order: 3 }
+                                // 95% CI shading (upper → lower fill)
+                                { label: 'Upper Bound', data: upper, borderColor: 'rgba(74,222,128,0.25)', backgroundColor: 'rgba(74,222,128,0.10)', fill: '+1', pointRadius: 0, tension: 0.4, borderWidth: 1, borderDash: [4, 4], order: 3, spanGaps: true },
+                                { label: 'Lower Bound', data: lower, borderColor: 'rgba(74,222,128,0.25)', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.4, borderWidth: 1, borderDash: [4, 4], order: 4, spanGaps: true },
+                                // Predicted line (green dashed)
+                                { label: 'Predicted', data: predicted, borderColor: '#4ADE80', backgroundColor: 'rgba(74,222,128,0.05)', borderWidth: 3, pointRadius: 5, pointHoverRadius: 8, pointBackgroundColor: '#16A34A', pointBorderColor: '#4ADE80', pointBorderWidth: 2, tension: 0.4, fill: false, order: 1, spanGaps: true, borderDash: [6, 4] },
+                                // Actual line (orange solid)
+                                { label: 'Actual Data', data: actuals, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.08)', borderWidth: 3, pointRadius: 5, pointHoverRadius: 8, pointBackgroundColor: '#B45309', pointBorderColor: '#F59E0B', pointBorderWidth: 2, tension: 0.4, fill: true, order: 2, spanGaps: true },
                             ]
                         },
                         options: {
                             responsive: true, maintainAspectRatio: false,
                             plugins: {
                                 legend: { display: false },
-                                tooltip: { backgroundColor: 'rgba(15,23,42,0.95)', titleFont: { family: 'Inter', size: 12 }, bodyFont: { family: 'Inter', size: 12 }, padding: 12, cornerRadius: 10,
-                                    callbacks: { label: function(c) { const v = Intl.NumberFormat().format(c.raw); if (c.datasetIndex === 1) return 'Predicted: ' + v; if (c.datasetIndex === 0) return 'Upper: ' + v; return 'Lower: ' + v; } } }
+                                tooltip: {
+                                    backgroundColor: 'rgba(15,23,42,0.95)', titleFont: { family: 'Inter', size: 12 }, bodyFont: { family: 'Inter', size: 12 }, padding: 12, cornerRadius: 10,
+                                    callbacks: {
+                                        label: function (c) {
+                                            if (c.raw === null || c.raw === undefined) return null;
+                                            const v = Intl.NumberFormat().format(c.raw);
+                                            if (c.datasetIndex === 3) return '🟠 Actual: ' + v;
+                                            if (c.datasetIndex === 2) return '🟢 Predicted: ' + v;
+                                            if (c.datasetIndex === 0) return '▲ Upper 95% CI: ' + v;
+                                            if (c.datasetIndex === 1) return '▼ Lower 95% CI: ' + v;
+                                            return v;
+                                        }
+                                    }
+                                }
                             },
                             scales: {
-                                y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { family: 'Inter', size: 11 } } },
-                                x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { family: 'Inter', size: 11 } } }
+                                y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { family: 'Inter', size: 11 }, callback: function (val) { return Intl.NumberFormat('en', { notation: 'compact' }).format(val); } } },
+                                x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { family: 'Inter', size: 11 }, maxRotation: 45, minRotation: 45 } }
                             }
                         }
                     });
@@ -1115,11 +1381,35 @@
                                 .toLowerCase()
                                 .replace(/\b\w/g, s => s.toUpperCase());
 
+                            let finalForecasts = data.forecasts;
+                            let finalMape = parseFloat(data.mape);
+                            let finalInterpretation = data.mape_interpretation;
+                            let isFallback = false;
+
+                            // Selective Fallback Mechanism:
+                            // When the model exceeds a 100% MAPE threshold, 
+                            // the system automatically switches to Seasonal Mean Forecasting.
+                            if (finalMape > 100) {
+                                console.warn(`MAPE for ${spotName} is ${finalMape}%. Switching to Seasonal Mean Forecasting fallback.`);
+                                finalForecasts = this.calculateSeasonalMean(data.historical_monthly || data.historical_test || []);
+                                finalInterpretation = "Seasonal Mean (Selective Fallback)";
+                                isFallback = true;
+                            }
+
                             return {
-                                name: data.attraction, name_formatted: nameFormatted,
-                                mape: data.mape, mape_interpretation: data.mape_interpretation,
-                                seasonal_analysis: data.seasonal_analysis, peak_seasons: data.peak_seasons,
-                                raw_forecasts: data.forecasts
+                                name: data.attraction,
+                                name_formatted: nameFormatted,
+                                mape: finalMape,
+                                mape_interpretation: finalInterpretation,
+                                isFallback: isFallback,
+                                sarima_order: data.sarima_order,
+                                seasonal_analysis: data.seasonal_analysis,
+                                peak_seasons: data.peak_seasons,
+                                raw_forecasts: finalForecasts,
+                                historical_monthly: data.historical_monthly || [],
+                                historical_test: data.historical_test || [],
+                                test_predicted: data.test_predicted || [],
+                                historical_yearly: data.historical_yearly || []
                             };
                         });
 
@@ -1160,17 +1450,17 @@
             const now = new Date();
             return {
                 // ── State ──
-                currentYear:   now.getFullYear(),
-                selectedYear:  now.getFullYear(),
+                currentYear: now.getFullYear(),
+                selectedYear: now.getFullYear(),
                 selectedMonth: now.getMonth() + 1,  // 1-indexed
-                selectedDay:   null,
+                selectedDay: null,
                 availableDays: [],
-                tableRows:     [],
-                lastSync:      null,
-                daysLoading:   false,
-                tableLoading:  false,
+                tableRows: [],
+                lastSync: null,
+                daysLoading: false,
+                tableLoading: false,
 
-                monthNames: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 
                 // ── Lifecycle ──
                 async init() {
@@ -1180,7 +1470,7 @@
                 // ── Actions ──
                 async selectMonth(m) {
                     this.selectedMonth = m;
-                    this.selectedDay   = null;
+                    this.selectedDay = null;
                     await this.fetchDays();
                 },
 
@@ -1191,14 +1481,14 @@
 
                 // ── API calls ──
                 async fetchDays() {
-                    this.daysLoading  = true;
+                    this.daysLoading = true;
                     this.availableDays = [];
-                    this.tableRows    = [];
-                    this.selectedDay  = null;
+                    this.tableRows = [];
+                    this.selectedDay = null;
 
                     try {
                         const url = `/api/statistics/month-days?year=${this.selectedYear}&month=${this.selectedMonth}`;
-                        const res  = await fetch(url);
+                        const res = await fetch(url);
                         if (!res.ok) throw new Error('Request failed');
                         const data = await res.json();
 
@@ -1221,11 +1511,11 @@
                         let url = `/api/statistics/area-breakdown?year=${this.selectedYear}&month=${this.selectedMonth}`;
                         if (this.selectedDay) url += `&day=${this.selectedDay}`;
 
-                        const res  = await fetch(url);
+                        const res = await fetch(url);
                         if (!res.ok) throw new Error('Request failed');
                         const data = await res.json();
 
-                        this.tableRows = data.rows  || [];
+                        this.tableRows = data.rows || [];
                         if (data.last_sync) this.lastSync = data.last_sync;
                     } catch (e) {
                         console.error('Area breakdown – fetchTable error:', e);

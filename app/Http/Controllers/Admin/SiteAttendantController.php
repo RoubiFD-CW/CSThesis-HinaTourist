@@ -19,25 +19,34 @@ class SiteAttendantController extends Controller
             });
         }
 
-        $attendants = $query->latest()->paginate(10);
+        $attendants = $query->latest()->paginate(5);
         return view('dashboard.admin', compact('attendants'));
     }
 
     public function store(Request $request)
     {
+        $validAreas = [
+            'Enchanted River', 'Hinatuan Adventure Park', 'Lodestone Shores Resort',
+            'Baculin Amazing Sand Bar', 'Harip Oceanside Beach', 'Rock Island Resort',
+            'Mamaon Beach Resort', 'Amparitas Integrated Nature Farm', 'Sibadan Fish Cage and Resort',
+            'Landong Bay', 'Davince Hidden Paradise', 'Tarusan Cold Spring',
+            'Llamas Beach Resort', 'Puro Brigida’s Beach', 'Bunsadan Falls',
+        ];
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'dedicated_area' => 'required|string|max:255',
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|string|email|max:255|unique:users',
+            'password'       => 'required|string|min:8',
+            'dedicated_area' => 'required|string|in:' . implode(',', $validAreas),
         ]);
 
+        // The User model's password cast auto-hashes on assignment — pass plain text only
         \App\Models\User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'password'       => $request->password,
             'dedicated_area' => $request->dedicated_area,
-            'is_admin' => false,
+            'is_admin'       => false,
         ]);
 
         return redirect()->back()->with('success', 'Site Attendant created successfully.');

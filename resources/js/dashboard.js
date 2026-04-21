@@ -32,14 +32,37 @@ export default function dashboard() {
         },
 
         init() {
-            window.addEventListener('online', () => { this.online = true; this.syncLogs(); });
+            // Instant detection
+            window.addEventListener('online', () => { 
+                this.online = true; 
+                this.syncLogs(); // Fire immediately
+            });
             window.addEventListener('offline', () => this.online = false);
+
+            // Faster periodic check (Every 2 seconds)
+            setInterval(() => {
+                if (navigator.onLine !== this.online) {
+                    this.online = navigator.onLine;
+                    if (this.online) {
+                        this.syncLogs();
+                        this.fetchLogs();
+                    }
+                }
+            }, 2000);
 
             this.pendingLogs = JSON.parse(localStorage.getItem('pending_logs') || '[]');
             this.logs = JSON.parse(localStorage.getItem('cached_logs') || '[]');
 
             if (this.online && this.pendingLogs.length > 0) this.syncLogs();
             this.fetchLogs();
+
+            // Auto-refresh dash every 8 seconds instead of 10
+            setInterval(() => {
+                if (this.online) {
+                    this.fetchLogs();
+                    if (this.pendingLogs.length > 0) this.syncLogs();
+                }
+            }, 8000);
 
             this.$watch('showScanner', value => {
                 if (value) this.initScanner();

@@ -20,12 +20,12 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 items-center">
-                <a href="{{ request()->routeIs('destinations') ? url('/home') : '/#hero' }}" 
-                   :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
-                   class="font-medium transition-colors text-sm uppercase tracking-wide">Home</a>
+                <a href="{{ request()->routeIs('destinations') ? url('/home') : '/#hero' }}"
+                    :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
+                    class="font-medium transition-colors text-sm uppercase tracking-wide">Home</a>
                 <a href="{{ request()->routeIs('destinations') ? url('/home') : '#destinations' }}"
-                   :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
-                   class="font-medium transition-colors text-sm uppercase tracking-wide">Destinations</a>
+                    :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
+                    class="font-medium transition-colors text-sm uppercase tracking-wide">Destinations</a>
                 <!-- <a href="#categories"
                     :class="scroll ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
                     class="font-medium transition-colors text-sm uppercase tracking-wide">Categories</a> -->
@@ -34,7 +34,7 @@
                     class="font-medium transition-colors text-sm uppercase tracking-wide">About</a> -->
 
                 @auth
-                    <a href="{{ url('/dashboard') }}"
+                    <a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}"
                         class="px-5 py-2.5 rounded-full bg-[#008080] text-white font-medium hover:bg-[#006666] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm">
                         Dashboard
                     </a>
@@ -75,7 +75,7 @@
 
             <div class="border-t border-slate-100 my-2 pt-2">
                 @auth
-                    <a href="{{ url('/dashboard') }}"
+                    <a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}"
                         class="block w-full text-center px-4 py-3 rounded-lg bg-[#008080] text-white font-medium shadow-md">Dashboard</a>
                 @else
                     <div class="px-2">

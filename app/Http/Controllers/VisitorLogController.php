@@ -38,33 +38,63 @@ class VisitorLogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'visitor_type'       => 'required|string|max:255',
+            'visitor_type'       => 'required|string|in:Local,Foreign Tourist',
             'group_size'         => 'required|integer|min:1',
             'male_count'         => 'required|integer|min:0',
             'female_count'       => 'required|integer|min:0',
-            'origin'             => 'required|string|max:255',
-            'visit_reason'       => 'required|string|max:255',
+            'origin'             => 'required|string|in:Within the province,Other province,Foreign country residence',
+            'visit_reason'       => 'required|string|in:Vacation or Leisure,Business,Others',
             'visit_reason_other' => 'nullable|string|max:255',
             'dedicated_area'     => 'nullable|string|max:255',
             'visit_date'         => 'required|date',
         ]);
 
+        if ((int)$request->group_size !== ((int)$request->male_count + (int)$request->female_count)) {
+            return response()->json(['message' => 'Data inconsistency: Group size must equal the exact sum of male and female counts.'], 422);
+        }
+
         try {
             $user = auth()->user();
             if (!$user->is_admin && !empty($user->dedicated_area)) {
                 if (strtolower(trim($request->dedicated_area)) !== strtolower(trim($user->dedicated_area))) {
-                    return response()->json(['error' => 'Unauthorized: This QR pass does not belong to your assigned location.'], 403);
+                    return response()->json(['message' => 'Unauthorized: This QR pass does not belong to your assigned location.'], 403);
                 }
             }
 
-            $log = \App\Models\VisitorLog::create($request->all() + [
-                'attendant_id' => $user->id,
+            // Prevent exact duplicates created rapidly via double-scans or double-taps
+            $recentLog = \App\Models\VisitorLog::where('attendant_id', $user->id)
+                ->where('visitor_type', $request->visitor_type)
+                ->where('group_size', $request->group_size)
+                ->where('male_count', $request->male_count)
+                ->where('female_count', $request->female_count)
+                ->where('origin', $request->origin)
+                ->where('dedicated_area', $request->dedicated_area)
+                ->where('created_at', '>=', now()->subSeconds(30))
+                ->first();
+
+            if ($recentLog) {
+                // Silently accept duplicate payload by returning the old log info, avoiding frontend errors while maintaining data integrity
+                return response()->json(['success' => true, 'log' => $recentLog]);
+            }
+
+            // Only pass whitelisted fields — prevents JS meta-fields (local_id, pending, syncing) from leaking into the model
+            $log = \App\Models\VisitorLog::create([
+                'visitor_type'       => $request->visitor_type,
+                'group_size'         => $request->group_size,
+                'male_count'         => $request->male_count,
+                'female_count'       => $request->female_count,
+                'origin'             => $request->origin,
+                'visit_reason'       => $request->visit_reason,
+                'visit_reason_other' => $request->visit_reason === 'Others' ? $request->visit_reason_other : null,
+                'dedicated_area'     => $request->dedicated_area,
+                'visit_date'         => $request->visit_date,
+                'attendant_id'       => $user->id,
             ]);
 
             return response()->json(['success' => true, 'log' => $log]);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('VisitorLog Store Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to save log: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to save log: ' . $e->getMessage()], 500);
         }
     }
 }

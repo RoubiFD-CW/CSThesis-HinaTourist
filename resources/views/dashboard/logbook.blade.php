@@ -39,7 +39,7 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto w-full p-4 sm:p-8">
+    <main class="flex-1 flex flex-col relative overflow-y-auto w-full px-4 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-10">
         <!-- Background Decor -->
         <div class="absolute inset-0 -z-10 pointer-events-none">
             <div class="absolute top-[15%] right-[10%] w-[35%] h-[35%] rounded-full bg-indigo-100/40 blur-[100px]">
@@ -47,7 +47,7 @@
             <div class="absolute bottom-[10%] left-[5%] w-[30%] h-[30%] rounded-full bg-cyan-100/30 blur-[80px]"></div>
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4" x-data="logbook()">
+        <div class="w-full px-0 sm:px-2 pt-0 pb-4" x-data="logbook()">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
@@ -133,35 +133,64 @@
                             <!-- Origin -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Where are you from?</label>
-                                <select x-model="form.origin" required
-                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all">
-                                    <option value="" disabled selected>Select origin...</option>
-                                    <template x-if="form.visitor_type === 'Local'">
-                                    <optgroup label="Local Options">
-                                        <option value="Within the province">Within the province</option>
-                                        <option value="Other province">Other province</option>
-                                    </optgroup>
-                                    </template>
-                                    <template x-if="form.visitor_type === 'Foreign Tourist'">
-                                        <optgroup label="Foreign Option">
-                                            <option value="Foreign country residence">Foreign country residence</option>
-                                        </optgroup>
-                                    </template>
-                                </select>
+                                <div class="relative" x-data="{ 
+                                        open: false, 
+                                        options: { 'Local': ['Within the province', 'Other province'], 'Foreign Tourist': ['Foreign country residence'] }, 
+                                        selectOption(val) { form.origin = val; this.open = false; } 
+                                    }" @click.away="open = false">
+
+                                    <div @click="open = !open" tabindex="0"
+                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
+                                        <span x-text="form.origin || 'Select origin...'"
+                                            :class="form.origin ? 'text-slate-900' : 'text-slate-500'"></span>
+                                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"
+                                            :class="open ? 'rotate-180' : ''"></i>
+                                    </div>
+
+                                    <div x-show="open" x-transition.opacity.duration.200ms
+                                        class="absolute z-[100] w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                        style="display: none;">
+                                        <template x-for="opt in options[form.visitor_type] || []" :key="opt">
+                                            <div @click="selectOption(opt)"
+                                                class="px-4 py-2.5 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                :class="form.origin === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
+                                                x-text="opt"></div>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Reason -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Reason for visit</label>
-                                <select x-model="form.visit_reason"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all">
-                                    <option value="Vacation/Leisure">Vacation or Leisure</option>
-                                    <option value="Business">Business</option>
-                                    <option value="Other">Other reason</option>
-                                </select>
+                                <div class="relative" x-data="{ 
+                                        open: false, 
+                                        options: ['Vacation or Leisure', 'Business', 'Others'],
+                                        selectOption(val) { form.visit_reason = val; this.open = false; } 
+                                    }" @click.away="open = false">
+
+                                    <div @click="open = !open" tabindex="0"
+                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
+                                        <span x-text="form.visit_reason || 'Select reason...'"
+                                            :class="form.visit_reason ? 'text-slate-900' : 'text-slate-500'"></span>
+                                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"
+                                            :class="open ? 'rotate-180' : ''"></i>
+                                    </div>
+
+                                    <div x-show="open" x-transition.opacity.duration.200ms
+                                        class="absolute z-[100] w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                        style="display: none;">
+                                        <template x-for="opt in options" :key="opt">
+                                            <div @click="selectOption(opt)"
+                                                class="px-4 py-2.5 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                :class="form.visit_reason === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
+                                                x-text="opt"></div>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="mb-4" x-show="form.visit_reason === 'Other'" x-transition>
+                            <div class="mb-4" x-show="form.visit_reason === 'Others'" x-transition>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Specify Reason</label>
                                 <input type="text" x-model="form.visit_reason_other" placeholder="Please specify"
                                     class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all">
@@ -177,19 +206,19 @@
                                     search: form.dedicated_area || '',
                                     options: [
                                         { value: 'Enchanted River', label: 'Enchanted River' },
+                                        { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
                                         { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
-                                        { value: 'Baculin Amazing Sand (Bar)', label: 'Baculin Amazing Sand (Bar)' },
-                                        { value: 'Harip Oceanside (White) Beach', label: 'Harip Oceanside (White) Beach' },
+                                        { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
+                                        { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
                                         { value: 'Rock Island Resort', label: 'Rock Island Resort' },
+                                        { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                         { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
                                         { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
-                                        { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
-                                        { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
-                                        { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                         { value: 'Landong Bay', label: 'Landong Bay' },
+                                        { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
                                         { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
                                         { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
-                                        { value: 'Puro Brigida\'s Beach', label: 'Puro Brigida\'s Beach' },
+                                        { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
                                         { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
                                     ],
                                     get filteredOptions() {
@@ -225,7 +254,7 @@
 
                                         <!-- Dropdown Options -->
                                         <div x-show="isAdmin && open" x-transition.opacity.duration.200ms
-                                            class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-56 overflow-y-auto"
+                                            class="absolute z-[100] w-full bottom-[calc(100%+4px)] bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto"
                                             style="display: none;">
                                             <ul class="py-1 relative top-0 z-[100]">
                                                 <template x-for="option in filteredOptions" :key="option.value">
@@ -278,7 +307,7 @@
                                                     (M:<span x-text="log.male_count"></span>, F:<span
                                                         x-text="log.female_count"></span>)</span>
                                                 <span class="text-xs text-slate-400"
-                                                    x-text="log.visit_reason === 'Other' ? log.visit_reason_other : log.visit_reason"></span>
+                                                    x-text="log.visit_reason === 'Others' ? (log.visit_reason_other || 'Others') : log.visit_reason"></span>
                                             </div>
                                         </div>
                                         <div class="flex flex-col items-end gap-1">
@@ -339,7 +368,7 @@
                                             </td>
                                             <td class="px-6 py-4">
                                                 <div class="text-sm text-slate-600"
-                                                    x-text="log.visit_reason === 'Other' ? log.visit_reason_other : log.visit_reason">
+                                                    x-text="log.visit_reason === 'Others' ? (log.visit_reason_other || 'Others') : log.visit_reason">
                                                 </div>
                                                 <div class="text-xs text-slate-400 mt-0.5" x-text="log.dedicated_area">
                                                 </div>
@@ -368,7 +397,8 @@
                         </div>
 
                         {{-- Pagination Controls --}}
-                        <div x-show="totalPages > 1" class="p-4 border-t border-slate-100 bg-white/50 flex items-center justify-between gap-4">
+                        <div x-show="totalPages > 1"
+                            class="p-4 border-t border-slate-100 bg-white/50 flex items-center justify-between gap-4">
                             <div class="text-xs text-slate-500 font-medium">
                                 Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
                             </div>
@@ -386,6 +416,29 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Toast Notification --}}
+            <div x-show="showToast"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform translate-y-2"
+                class="fixed bottom-5 right-5 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px]"
+                :class="toastType === 'success' ? 'bg-[#008080] text-white shadow-[#008080]/20' : 'bg-rose-600 text-white shadow-rose-500/20'"
+                style="display: none;" x-cloak>
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid" :class="toastType === 'success' ? 'fa-check' : 'fa-triangle-exclamation'"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm" x-text="toastType === 'success' ? 'Success' : 'Error'"></h4>
+                    <p class="text-xs text-white/90" x-text="toastMessage"></p>
+                </div>
+                <button @click="showToast = false" class="ml-auto text-white/60 hover:text-white">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
         </div>
     </main>
 
@@ -393,13 +446,16 @@
         function logbook() {
             return {
                 online: navigator.onLine,
+                showToast: false,
+                toastMessage: '',
+                toastType: 'success',
                 form: {
                     visitor_type: 'Foreign Tourist',
                     group_size: 1,
-                    male_count: 0,
-                    female_count: 0,
+                    male_count: '',
+                    female_count: '',
                     origin: '',
-                    visit_reason: 'Vacation/Leisure',
+                    visit_reason: 'Vacation or Leisure',
                     visit_reason_other: '',
                     dedicated_area: @json(auth()->user()->dedicated_area) || '',
                     visit_date: new Date().toISOString().slice(0, 16)
@@ -408,7 +464,7 @@
                 pendingLogs: [], // Local logs
                 errors: { male_count: '', female_count: '' },
                 currentPage: 1,
-                perPage: 10,
+                perPage: 5,
 
                 get totalPages() {
                     return Math.ceil(this.allLogsList.length / this.perPage) || 1;
@@ -428,9 +484,20 @@
                     // Check connection status listeners
                     window.addEventListener('online', () => {
                         this.online = true;
-                        this.syncLogs();
+                        this.syncLogs(); // Trigger sync immediately upon reconnection
                     });
                     window.addEventListener('offline', () => this.online = false);
+
+                    // Faster periodic online check (every 2 seconds)
+                    setInterval(() => {
+                        if (navigator.onLine !== this.online) {
+                            this.online = navigator.onLine;
+                            if (this.online) {
+                                this.syncLogs();
+                                this.fetchLogs();
+                            }
+                        }
+                    }, 2000);
 
                     // Watch for visitor_type change
                     this.$watch('form.visitor_type', () => {
@@ -439,6 +506,7 @@
 
                     // Load from LocalStorage
                     this.pendingLogs = JSON.parse(localStorage.getItem('pending_logs') || '[]');
+                    this.logs = JSON.parse(localStorage.getItem('cached_logs') || '[]');
 
                     // Auto-sync if online
                     if (this.online && this.pendingLogs.length > 0) {
@@ -455,8 +523,11 @@
                     axios.get('{{ route("api.logs.index") }}')
                         .then(response => {
                             this.logs = response.data;
+                            localStorage.setItem('cached_logs', JSON.stringify(this.logs));
                         })
-                        .catch(err => console.error(err));
+                        .catch(err => {
+                            console.error('Fetch failed, using cache if available:', err);
+                        });
                 },
 
                 validateNumber(field) {
@@ -512,10 +583,12 @@
 
                     // Reset form but keep area/date/type for convenience
                     this.form.origin = '';
-                    this.form.male_count = 0;
-                    this.form.female_count = 0;
-                    this.form.visit_reason = 'Vacation/Leisure';
+                    this.form.male_count = '';
+                    this.form.female_count = '';
+                    this.form.visit_reason = 'Vacation or Leisure';
                     this.form.visit_reason_other = '';
+
+                    this.toast('Entry saved! Will sync when online.', 'success');
 
                     // Try to sync if online
                     if (this.online) {
@@ -547,7 +620,12 @@
                                 if (error.response && error.response.status === 422) {
                                     this.pendingLogs = this.pendingLogs.filter(l => l.local_id !== log.local_id);
                                     this.saveToStorage();
-                                    alert('A pending log had invalid data and was discarded.');
+                                    const msg = error.response.data?.message || 'A log had invalid data and was discarded.';
+                                    this.toast(msg, 'error');
+                                } else if (error.response && error.response.status === 403) {
+                                    this.pendingLogs = this.pendingLogs.filter(l => l.local_id !== log.local_id);
+                                    this.saveToStorage();
+                                    this.toast('Log rejected: QR does not match your assigned area.', 'error');
                                 } else {
                                     log.syncing = false;
                                 }
@@ -557,6 +635,13 @@
 
                 saveToStorage() {
                     localStorage.setItem('pending_logs', JSON.stringify(this.pendingLogs));
+                },
+
+                toast(message, type = 'success') {
+                    this.toastMessage = message;
+                    this.toastType = type;
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 3500);
                 }
             }
         }
@@ -564,4 +649,3 @@
 </body>
 
 </html>
-

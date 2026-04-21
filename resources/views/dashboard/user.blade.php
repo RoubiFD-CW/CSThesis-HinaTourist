@@ -9,7 +9,8 @@
     @include('partials.head')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700&display=swap"
         rel="stylesheet">
     <style>
         body {
@@ -18,6 +19,12 @@
 
         [x-cloak] {
             display: none !important;
+        }
+
+        @media (min-width: 1024px) {
+            .desktop-modal-offset {
+                left: 16rem !important;
+            }
         }
     </style>
 </head>
@@ -39,13 +46,13 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 p-4 sm:p-8">
+    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 px-4 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-10">
         <div class="absolute inset-0 -z-10 pointer-events-none">
             <div class="absolute top-[15%] right-[10%] w-[35%] h-[35%] rounded-full bg-rose-100/40 blur-[100px]"></div>
             <div class="absolute bottom-[10%] left-[5%] w-[30%] h-[30%] rounded-full bg-amber-100/30 blur-[80px]"></div>
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4" x-data="dashboard()">
+        <div class="w-full px-0 sm:px-2 pt-0 pb-4" x-data="dashboard()">
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Dashboard</h1>
@@ -97,7 +104,8 @@
                 <div class="p-5 border-b border-slate-100">
                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Recent Activity
-                        <span class="ml-auto bg-slate-100 text-slate-600 py-1 px-3 rounded-full text-xs font-bold" style="font-family: 'Poppins', sans-serif;" x-text="allLogs.length + ' Logs'"></span>
+                        <span class="ml-auto bg-slate-100 text-slate-600 py-1 px-3 rounded-full text-xs font-bold"
+                            style="font-family: 'Poppins', sans-serif;" x-text="allLogs.length + ' Logs'"></span>
                     </h2>
                 </div>
                 <div class="divide-y divide-slate-100">
@@ -137,11 +145,12 @@
 
             {{-- Scanner Modal --}}
             <div x-show="showScanner" x-cloak
-                class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"
+                class="fixed inset-0 desktop-modal-offset z-50 flex items-center justify-center"
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative" @click.away="closeScanner()">
+                <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" @click="closeScanner()"></div>
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
                     <button @click="closeScanner()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
                         <i class="fa-solid fa-times text-xl"></i>
                     </button>
@@ -153,8 +162,11 @@
 
             {{-- Generator Modal --}}
             <div x-show="showGenerator" x-cloak
-                class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"
-                x-transition>
+                class="fixed inset-0 desktop-modal-offset z-50 flex items-center justify-center"
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" @click="showGenerator = false"></div>
                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
                     <button @click="showGenerator = false"
                         class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -165,28 +177,80 @@
                     </p>
                     <div class="space-y-4">
                         @if(auth()->user()->is_admin)
-                            <div>
+                            <div class="mb-4" x-data="{
+                                        open: false,
+                                        search: '',
+                                        options: [
+                                            { value: 'Enchanted River', label: 'Enchanted River' },
+                                            { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
+                                            { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
+                                            { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
+                                            { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
+                                            { value: 'Rock Island Resort', label: 'Rock Island Resort' },
+                                            { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
+                                            { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
+                                            { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
+                                            { value: 'Landong Bay', label: 'Landong Bay' },
+                                            { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
+                                            { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
+                                            { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
+                                            { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
+                                            { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
+                                        ],
+                                        get filteredOptions() {
+                                            if (this.search === '') return this.options;
+                                            return this.options.filter(opt => opt.label.toLowerCase().includes(this.search.toLowerCase()));
+                                        },
+                                        selectOption(option) {
+                                            generatorArea = option.value;
+                                            this.search = option.label;
+                                            this.open = false;
+                                            generateSiteQR();
+                                        },
+                                        initSearch() {
+                                            const found = this.options.find(o => o.value === generatorArea);
+                                            if (found) this.search = found.label;
+                                        },
+                                        revertSearch() {
+                                            const found = this.options.find(o => o.value === generatorArea);
+                                            this.search = found ? found.label : '';
+                                        }
+                                    }" x-init="initSearch(); $watch('generatorArea', val => { 
+                                        const found = options.find(o => o.value === val); 
+                                        if(found) search = found.label; 
+                                    })">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Select Area</label>
-                                <select x-model="generatorArea" @change="generateSiteQR()"
-                                    class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 outline-none">
-                                    <option value="General">General (No specific area)</option>
-                                    <option value="Enchanted River">Enchanted River</option>
-                                    <option value="Lodestone Shores Resort">Lodestone Shores Resort</option>
-                                    <option value="Baculin Amazing Sand (Bar)">Baculin Amazing Sand (Bar)</option>
-                                    <option value="Harip Oceanside (White) Beach">Harip Oceanside (White) Beach</option>
-                                    <option value="Rock Island Resort">Rock Island Resort</option>
-                                    <option value="Amparitas Integrated Nature Farm">Amparitas Integrated Nature Farm
-                                    </option>
-                                    <option value="Sibadan Fish Cage and Resort">Sibadan Fish Cage and Resort</option>
-                                    <option value="Davince Hidden Paradise">Davince Hidden Paradise</option>
-                                    <option value="Hinatuan Adventure Park">Hinatuan Adventure Park</option>
-                                    <option value="Mamaon Beach Resort">Mamaon Beach Resort</option>
-                                    <option value="Landong Bay">Landong Bay</option>
-                                    <option value="Tarusan Cold Spring">Tarusan Cold Spring</option>
-                                    <option value="Llamas Beach Resort">Llamas Beach Resort</option>
-                                    <option value="Puro Brigida’s Beach">Puro Brigida’s Beach</option>
-                                    <option value="Bunsadan Falls">Bunsadan Falls</option>
-                                </select>
+
+                                <div class="relative">
+                                    <input type="text" x-model="search" @click="open = true" @focus="open = true"
+                                        @click.away="open = false; revertSearch();" @input="open = true"
+                                        @keydown.escape="open = false; revertSearch();"
+                                        @keydown.enter.prevent="if(filteredOptions.length > 0) selectOption(filteredOptions[0])"
+                                        placeholder="Search or select an area"
+                                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-sm bg-white cursor-text"
+                                        autocomplete="off">
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform"
+                                        :class="open ? 'rotate-180' : ''"></i>
+
+                                    <!-- Dropdown -->
+                                    <div x-show="open" x-transition.opacity.duration.200ms
+                                        class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-56 overflow-y-auto"
+                                        style="display: none;">
+                                        <ul class="py-1">
+                                            <template x-for="option in filteredOptions" :key="option.value">
+                                                <li class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer text-sm text-slate-700 transition-colors"
+                                                    :class="generatorArea === option.value ? 'bg-indigo-50 text-indigo-600 font-medium' : ''"
+                                                    @click="selectOption(option)">
+                                                    <span x-text="option.label"></span>
+                                                </li>
+                                            </template>
+                                            <div x-show="filteredOptions.length === 0"
+                                                class="px-4 py-3 text-sm text-slate-500 text-center">
+                                                No matches found
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         @else
                             <div class="p-3 bg-[#008080]/10 rounded-lg border border-[#008080]/20 text-[#008080] text-sm">
@@ -246,4 +310,3 @@
 </body>
 
 </html>
-

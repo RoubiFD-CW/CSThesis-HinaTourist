@@ -289,7 +289,7 @@
             <div class="flex-1 relative">
                 <!-- Map Image with Hover Effect -->
                 <div class="relative w-full max-w-md mx-auto">
-                    <img src="HinaTouristImages/hinatuanmap.svg"
+                    <img src="{{ asset('HinaTouristImages/hinatuanmap.svg') }}"
                         alt="Hinatuan Map" 
                         class="w-full h-auto transform transition-all duration-500 hover:scale-105 hover:-translate-y-3">
                 </div>

@@ -39,13 +39,13 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 p-4 sm:p-8 bg-slate-50">
+    <main class="flex-1 flex flex-col relative overflow-y-auto min-w-0 px-4 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-10 bg-slate-50">
         {{-- Dashboard SVG Background --}}
         <div class="absolute inset-0 top-0 left-0 w-full h-full z-10 pointer-events-none">
             <img src="{{ asset('dashboardimg.svg') }}" alt="Dashboard Background" class="w-full h-full object-cover object-top opacity-100">
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4 z-20" x-data="dashboard()">
+        <div class="w-full px-0 sm:px-2 pt-0 pb-4 z-20" x-data="dashboard()">
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Dashboard</h1>
@@ -368,19 +368,19 @@
                                         search: '',
                                         options: [
                                             { value: 'Enchanted River', label: 'Enchanted River' },
+                                            { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
                                             { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
-                                            { value: 'Baculin Amazing Sand (Bar)', label: 'Baculin Amazing Sand (Bar)' },
-                                            { value: 'Harip Oceanside (White) Beach', label: 'Harip Oceanside (White) Beach' },
+                                            { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
+                                            { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
                                             { value: 'Rock Island Resort', label: 'Rock Island Resort' },
+                                            { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                             { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
                                             { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
-                                            { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
-                                            { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
-                                            { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                             { value: 'Landong Bay', label: 'Landong Bay' },
+                                            { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
                                             { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
                                             { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
-                                            { value: 'Puro Brigida\'s Beach', label: 'Puro Brigida\'s Beach' },
+                                            { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
                                             { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
                                         ],
                                         get filteredOptions() {
@@ -496,4 +496,3 @@
 </body>
 
 </html>
-

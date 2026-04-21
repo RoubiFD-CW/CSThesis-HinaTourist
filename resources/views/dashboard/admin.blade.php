@@ -4,110 +4,21 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'PWA App') }} | Admin Dashboard</title>
+    <title>{{ config('app.name', 'PWA App') }} | User Management</title>
     @include('partials.head')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
+        [x-cloak] { display: none !important; }
         body {
             font-family: 'Inter', sans-serif;
         }
-
-        /* From Uiverse.io by Yaya12085 */
-        .card-modal {
-            overflow: hidden;
-            position: relative;
-            background-color: #ffffff;
-            text-align: left;
-            border-radius: 0.5rem;
-            max-width: 290px;
-            box-shadow:
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .header-modal {
-            padding: 1.25rem 1rem 1rem 1rem;
-            background-color: #ffffff;
-        }
-
-        .image-modal {
-            display: flex;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: #fee2e2;
-            flex-shrink: 0;
-            justify-content: center;
-            align-items: center;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 9999px;
-        }
-
-        .image-modal svg {
-            color: #dc2626;
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .content-modal {
-            margin-top: 0.75rem;
-            text-align: center;
-        }
-
-        .title-modal {
-            color: #111827;
-            font-size: 1rem;
-            font-weight: 600;
-            line-height: 1.5rem;
-        }
-
-        .message-modal {
-            margin-top: 0.5rem;
-            color: #6b7280;
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-        }
-
-        .actions-modal {
-            margin: 0.75rem 1rem;
-            background-color: #f9fafb;
-        }
-
-        .desactivate-modal {
-            display: inline-flex;
-            padding: 0.5rem 1rem;
-            background-color: #dc2626;
-            color: #ffffff;
-            font-size: 1rem;
-            line-height: 1.5rem;
-            font-weight: 500;
-            justify-content: center;
-            width: 100%;
-            border-radius: 0.375rem;
-            border-width: 1px;
-            border-color: transparent;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-        }
-
-        .cancel-modal {
-            display: inline-flex;
-            margin-top: 0.75rem;
-            padding: 0.5rem 1rem;
-            background-color: #ffffff;
-            color: #374151;
-            font-size: 1rem;
-            line-height: 1.5rem;
-            font-weight: 500;
-            justify-content: center;
-            width: 100%;
-            border-radius: 0.375rem;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            cursor: pointer;
+        @media (min-width: 1024px) {
+            .desktop-modal-offset {
+                left: 16rem !important;
+            }
         }
     </style>
 </head>
@@ -130,14 +41,14 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="flex-1 flex flex-col relative overflow-y-auto w-full p-4 sm:p-8">
+    <main class="flex-1 flex flex-col relative overflow-y-auto w-full px-4 pt-6 pb-6 sm:px-8 sm:pt-8 sm:pb-10">
         <!-- Background Decor -->
         <div class="absolute inset-0 -z-10 pointer-events-none">
             <div class="absolute top-[15%] right-[10%] w-[35%] h-[35%] rounded-full bg-rose-100/40 blur-[100px]"></div>
             <div class="absolute bottom-[10%] left-[5%] w-[30%] h-[30%] rounded-full bg-amber-100/30 blur-[80px]"></div>
         </div>
 
-        <div class="w-full px-0 sm:px-2 py-2 sm:py-4">
+        <div class="w-full px-0 sm:px-2 pt-0 pb-4">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-1 sm:mb-2">
                 User Management
             </h1>
@@ -186,19 +97,19 @@
                                 selected: '',
                                 options: [
                                     { value: 'Enchanted River', label: 'Enchanted River' },
+                                    { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
                                     { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
-                                    { value: 'Baculin Amazing Sand (Bar)', label: 'Baculin Amazing Sand (Bar)' },
-                                    { value: 'Harip Oceanside (White) Beach', label: 'Harip Oceanside (White) Beach' },
+                                    { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
+                                    { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
                                     { value: 'Rock Island Resort', label: 'Rock Island Resort' },
+                                    { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                     { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
                                     { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
-                                    { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
-                                    { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
-                                    { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
                                     { value: 'Landong Bay', label: 'Landong Bay' },
+                                    { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
                                     { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
                                     { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
-                                    { value: 'Puro Brigida\'s Beach', label: 'Puro Brigida\'s Beach' },
+                                    { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
                                     { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
                                 ],
                                 get filteredOptions() {
@@ -389,29 +300,62 @@
 
     {{-- Delete Confirmation Modal --}}
     <div x-show="deleteModal" 
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" 
+        class="fixed inset-0 desktop-modal-offset z-[100] flex items-center justify-center p-4 sm:p-0" 
         x-cloak>
-        <div class="card-modal" @click.away="deleteModal = false" x-show="deleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
-            <div class="header-modal">
-                <div class="image-modal">
-                    <svg aria-hidden="true" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" stroke-linejoin="round" stroke-linecap="round"></path>
+        
+        <!-- Backdrop -->
+        <div x-show="deleteModal"
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100" 
+             x-transition:leave-end="opacity-0"
+             class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+             @click="deleteModal = false"></div>
+
+        <!-- Modal Panel -->
+        <div x-show="deleteModal" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            
+            <div class="p-6 sm:p-8">
+                <!-- Icon -->
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 mb-6">
+                    <svg class="h-8 w-8 text-rose-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
-                <div class="content-modal">
-                    <span class="title-modal">Deactivate account</span>
-                    <p class="message-modal">
-                        Are you sure you want to delete <span class="font-bold text-slate-800" x-text="deleteName"></span>? This action cannot be undone.
+                
+                <!-- Content -->
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Delete Attendant Account</h3>
+                    <p class="text-slate-500 text-sm sm:text-base mb-6 leading-relaxed">
+                        Are you sure you want to permanently delete <span class="font-bold text-slate-800" x-text="deleteName"></span>? This action cannot be undone and will remove all their access.
                     </p>
                 </div>
-                <div class="actions-modal">
-                    <form :action="deleteAction" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button class="desactivate-modal" type="submit">Delete</button>
-                    </form>
-                    <button class="cancel-modal" type="button" @click="deleteModal = false">Cancel</button>
-                </div>
+                
+                <!-- Actions -->
+                <form :action="deleteAction" method="POST" class="mt-2">
+                    @csrf
+                    @method('DELETE')
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button type="button" 
+                                @click="deleteModal = false" 
+                                class="w-full sm:w-1/2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors focus:ring-2 focus:ring-slate-200 focus:outline-none">
+                            Cancel
+                        </button>
+                        <button type="submit" 
+                                class="w-full sm:w-1/2 px-4 py-2.5 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 shadow-lg shadow-rose-600/20 transition-all focus:ring-2 focus:ring-rose-500 focus:outline-none active:scale-[0.98]">
+                            Delete Account
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

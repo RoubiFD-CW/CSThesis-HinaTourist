@@ -72,28 +72,29 @@ class VAR2PGenerator
         }
 
         // Fetch logs for the year that have a dedicated_area
-        $logs = VisitorLog::whereYear('visit_date', $year)
+        // Use chunk to prevent memory exhaustion on shared hosting
+        VisitorLog::whereYear('visit_date', $year)
             ->whereNotNull('dedicated_area')
-            ->get();
+            ->chunk(200, function ($logs) use (&$aggregated) {
+                foreach ($logs as $log) {
+                    $month = (int)$log->visit_date->format('n');
+                    $category = $this->categorizeOrigin($log->origin);
 
-        foreach ($logs as $log) {
-            $month = (int)$log->visit_date->format('n');
-            $category = $this->categorizeOrigin($log->origin);
+                    // Find the attraction code
+                    $attrName = null;
+                    foreach ($this->attractions as $attr) {
+                        if (strtolower(trim($attr['db_name'])) === strtolower(trim($log->dedicated_area))) {
+                            $attrName = $attr['name'];
+                            break;
+                        }
+                    }
 
-            // Find the attraction code
-            $attrName = null;
-            foreach ($this->attractions as $attr) {
-                if (strtolower($attr['db_name']) === strtolower($log->dedicated_area)) {
-                    $attrName = $attr['name'];
-                    break;
+                    if ($attrName && isset($aggregated[$attrName][$month])) {
+                        $aggregated[$attrName][$month]["{$category}_male"] += (int)$log->male_count;
+                        $aggregated[$attrName][$month]["{$category}_female"] += (int)$log->female_count;
+                    }
                 }
-            }
-
-            if ($attrName && isset($aggregated[$attrName][$month])) {
-                $aggregated[$attrName][$month]["{$category}_male"] += (int)$log->male_count;
-                $aggregated[$attrName][$month]["{$category}_female"] += (int)$log->female_count;
-            }
-        }
+            });
 
         return $aggregated;
     }
@@ -243,7 +244,9 @@ class XlsxBuilder
     public function build()
     {
         $zip = new \ZipArchive();
-        $tmp = tempnam(sys_get_temp_dir(), 'xlsx');
+        $tempDir = storage_path('app/temp');
+        if (!file_exists($tempDir)) mkdir($tempDir, 0755, true);
+        $tmp = tempnam($tempDir, 'xlsx');
         $zip->open($tmp, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $zip->addFromString('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>');
         $zip->addFromString('_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
