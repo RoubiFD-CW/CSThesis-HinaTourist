@@ -9,8 +9,7 @@
     @include('partials.head')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
         body {
@@ -30,7 +29,7 @@
 </head>
 
 <body x-data="{ sidebarOpen: false }"
-    class="antialiased bg-slate-50 text-slate-800 selection:bg-[#008080] selection:text-white h-screen overflow-y-auto flex flex-col lg:flex-row">
+    class="antialiased bg-slate-50 text-slate-800 selection:bg-brand selection:text-white h-screen overflow-y-auto flex flex-col lg:flex-row">
 
     @include('dashboard.partials.sidebar')
 
@@ -38,10 +37,12 @@
     <div class="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-20">
         <div class="flex items-center gap-2">
             <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
-            <span class="font-bold text-slate-800">{{ config('app.name') }}</span>
+            <span
+                class="font-black text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">{{ config('app.name') }}</span>
         </div>
-        <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-700 p-2">
-            <i class="fa-solid fa-bars text-xl"></i>
+        <button @click="sidebarOpen = true" class="p-2 transition-transform hover:scale-110">
+            <i
+                class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]"></i>
         </button>
     </div>
 
@@ -64,11 +65,11 @@
                         <i class="fa-solid fa-wifi-slash"></i> Offline
                     </span>
                     <span x-show="online && pendingLogs.length > 0"
-                        class="text-[#008080] text-sm font-bold flex items-center gap-1.5" x-cloak>
+                        class="text-brand text-sm font-bold flex items-center gap-1.5" x-cloak>
                         <i class="fa-solid fa-sync fa-spin"></i> Syncing
                     </span>
                     <span x-show="online && pendingLogs.length === 0"
-                        class="text-[#008080] text-sm font-bold flex items-center gap-1.5" x-cloak>
+                        class="text-brand text-sm font-bold flex items-center gap-1.5" x-cloak>
                         <i class="fa-solid fa-check-circle"></i> Synced
                     </span>
                 </div>
@@ -91,7 +92,7 @@
                     class="bg-white hover:bg-slate-50 relative group overflow-hidden p-6 rounded-2xl border border-slate-200 shadow-sm transition-all text-left flex items-start justify-between gap-4">
                     <div class="relative z-10">
                         <div
-                            class="w-12 h-12 rounded-xl bg-[#008080] text-white flex items-center justify-center text-xl mb-3 shadow-lg shadow-[#008080]/20 group-hover:scale-110 transition-transform duration-300">
+                            class="w-12 h-12 rounded-xl bg-brand shadow-md shadow-brand/20 text-white flex items-center justify-center text-xl mb-3 shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform duration-300">
                             <i class="fa-solid fa-print"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-900">Generate Site QR</h3>
@@ -125,7 +126,7 @@
                             </div>
                             <div class="text-right shrink-0">
                                 <span class="block text-xs font-medium"
-                                    :class="log.pending ? 'text-amber-600' : 'text-[#008080]'"
+                                    :class="log.pending ? 'text-amber-600' : 'text-teal-600'"
                                     x-text="log.pending ? 'Pending' : 'Synced'"></span>
                                 <span class="text-xs text-slate-400 mt-0.5"
                                     x-text="new Date(log.visit_date || log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
@@ -137,7 +138,7 @@
                     </div>
                     <div x-show="allLogs.length > 0" class="p-3 bg-slate-50 border-t border-slate-100 text-center">
                         <a href="{{ route('logbook.index') }}"
-                            class="text-sm text-[#008080] font-medium hover:text-[#006666]">View Full Logbook
+                            class="text-sm text-brand font-medium hover:text-[#006666]">View Full Logbook
                             &rarr;</a>
                     </div>
                 </div>
@@ -178,47 +179,47 @@
                     <div class="space-y-4">
                         @if(auth()->user()->is_admin)
                             <div class="mb-4" x-data="{
-                                        open: false,
-                                        search: '',
-                                        options: [
-                                            { value: 'Enchanted River', label: 'Enchanted River' },
-                                            { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
-                                            { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
-                                            { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
-                                            { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
-                                            { value: 'Rock Island Resort', label: 'Rock Island Resort' },
-                                            { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
-                                            { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
-                                            { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
-                                            { value: 'Landong Bay', label: 'Landong Bay' },
-                                            { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
-                                            { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
-                                            { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
-                                            { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
-                                            { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
-                                        ],
-                                        get filteredOptions() {
-                                            if (this.search === '') return this.options;
-                                            return this.options.filter(opt => opt.label.toLowerCase().includes(this.search.toLowerCase()));
-                                        },
-                                        selectOption(option) {
-                                            generatorArea = option.value;
-                                            this.search = option.label;
-                                            this.open = false;
-                                            generateSiteQR();
-                                        },
-                                        initSearch() {
-                                            const found = this.options.find(o => o.value === generatorArea);
-                                            if (found) this.search = found.label;
-                                        },
-                                        revertSearch() {
-                                            const found = this.options.find(o => o.value === generatorArea);
-                                            this.search = found ? found.label : '';
-                                        }
-                                    }" x-init="initSearch(); $watch('generatorArea', val => { 
-                                        const found = options.find(o => o.value === val); 
-                                        if(found) search = found.label; 
-                                    })">
+                                                        open: false,
+                                                        search: '',
+                                                        options: [
+                                                            { value: 'Enchanted River', label: 'Enchanted River' },
+                                                            { value: 'Hinatuan Adventure Park', label: 'Hinatuan Adventure Park' },
+                                                            { value: 'Lodestone Shores Resort', label: 'Lodestone Shores Resort' },
+                                                            { value: 'Baculin Amazing Sand Bar', label: 'Baculin Amazing Sand Bar' },
+                                                            { value: 'Harip Oceanside Beach', label: 'Harip Oceanside Beach' },
+                                                            { value: 'Rock Island Resort', label: 'Rock Island Resort' },
+                                                            { value: 'Mamaon Beach Resort', label: 'Mamaon Beach Resort' },
+                                                            { value: 'Amparitas Integrated Nature Farm', label: 'Amparitas Integrated Nature Farm' },
+                                                            { value: 'Sibadan Fish Cage and Resort', label: 'Sibadan Fish Cage and Resort' },
+                                                            { value: 'Landong Bay', label: 'Landong Bay' },
+                                                            { value: 'Davince Hidden Paradise', label: 'Davince Hidden Paradise' },
+                                                            { value: 'Tarusan Cold Spring', label: 'Tarusan Cold Spring' },
+                                                            { value: 'Llamas Beach Resort', label: 'Llamas Beach Resort' },
+                                                            { value: 'Puro Brigida’s Beach', label: 'Puro Brigida’s Beach' },
+                                                            { value: 'Bunsadan Falls', label: 'Bunsadan Falls' }
+                                                        ],
+                                                        get filteredOptions() {
+                                                            if (this.search === '') return this.options;
+                                                            return this.options.filter(opt => opt.label.toLowerCase().includes(this.search.toLowerCase()));
+                                                        },
+                                                        selectOption(option) {
+                                                            generatorArea = option.value;
+                                                            this.search = option.label;
+                                                            this.open = false;
+                                                            generateSiteQR();
+                                                        },
+                                                        initSearch() {
+                                                            const found = this.options.find(o => o.value === generatorArea);
+                                                            if (found) this.search = found.label;
+                                                        },
+                                                        revertSearch() {
+                                                            const found = this.options.find(o => o.value === generatorArea);
+                                                            this.search = found ? found.label : '';
+                                                        }
+                                                    }" x-init="initSearch(); $watch('generatorArea', val => { 
+                                                        const found = options.find(o => o.value === val); 
+                                                        if(found) search = found.label; 
+                                                    })">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Select Area</label>
 
                                 <div class="relative">
@@ -253,7 +254,7 @@
                                 </div>
                             </div>
                         @else
-                            <div class="p-3 bg-[#008080]/10 rounded-lg border border-[#008080]/20 text-[#008080] text-sm">
+                            <div class="p-3 bg-brand/10 rounded-lg border border-brand/20 text-brand text-sm">
                                 Generating QR for: <strong>{{ auth()->user()->dedicated_area }}</strong>
                             </div>
                         @endif
@@ -265,34 +266,13 @@
                             <span x-text="siteUrl"></span>
                         </div>
                         <button @click="printQR()"
-                            class="w-full py-3 bg-[#008080] hover:bg-[#006666] text-white font-bold rounded-xl shadow-lg shadow-[#008080]/20">
+                            class="w-full py-3 bg-brand shadow-md shadow-brand/20 hover:bg-brand-hover text-white font-bold rounded-xl shadow-lg shadow-brand/20">
                             <i class="fa-solid fa-print mr-2"></i> Download / Print Poster
                         </button>
                     </div>
                 </div>
             </div>
 
-            {{-- Toast Notification --}}
-            <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-2"
-                class="fixed bottom-5 right-5 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px]"
-                :class="toastType === 'success' ? 'bg-[#008080] text-white shadow-[#008080]/20' : 'bg-rose-600 text-white shadow-rose-500/20'"
-                style="display: none;" x-cloak>
-                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <i class="fa-solid" :class="toastType === 'success' ? 'fa-check' : 'fa-triangle-exclamation'"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm" x-text="toastType === 'success' ? 'Success' : 'Error'"></h4>
-                    <p class="text-xs text-white/90" x-text="toastMessage"></p>
-                </div>
-                <button @click="showToast = false" class="ml-auto text-white/60 hover:text-white">
-                    <i class="fa-solid fa-times"></i>
-                </button>
-            </div>
         </div>
     </main>
 

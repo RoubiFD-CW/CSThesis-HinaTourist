@@ -1,15 +1,26 @@
 <x-guest-layout>
-    <div class="mb-4 text-center">
-        <h2 class="text-2xl font-bold text-slate-800">Welcome back</h2>
-        <p class="text-sm text-slate-500">Sign in to your account</p>
+    <!-- Back to Home -->
+    <a href="/home"
+        class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors group mb-5">
+        <i class="fa-solid fa-arrow-left text-[10px] transition-transform group-hover:-translate-x-0.5"></i>
+        Back to Home
+    </a>
+
+    <!-- Header -->
+    <div class="text-center mb-6">
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight">Welcome back</h2>
+        <p class="text-sm text-slate-400 mt-1">Log In to your account</p>
     </div>
 
     {{-- Session Errors --}}
     @if($errors->any())
-        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-sm text-rose-600">
-            @foreach($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
+        <div class="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-sm text-rose-600 flex items-start gap-2.5">
+            <i class="fa-solid fa-circle-exclamation mt-0.5 text-rose-400 shrink-0"></i>
+            <div>
+                @foreach($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
         </div>
     @endif
 
@@ -18,48 +29,47 @@
             @csrf
 
             <!-- Email -->
-            <div class="mb-5">
-                <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-200"
-                    placeholder="attendant@example.com">
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-slate-600 mb-1.5">Email Address</label>
+                <div class="relative">
+                    <i
+                        class="fa-regular fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-sm placeholder-slate-400 transition-all duration-200"
+                        placeholder="Enter your email">
+                </div>
             </div>
 
             <!-- Password -->
-            <div class="mb-5 relative" x-data="{ show: false }">
-                <label for="password" class="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
-                <input :type="show ? 'text' : 'password'" name="password" id="password" required
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-200 pr-12"
-                    placeholder="••••••••">
-                <button type="button" @click="show = !show"
-                    class="absolute right-3 top-[38px] text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa-regular" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
-                </button>
+            <div class="mb-4" x-data="{ show: false }">
+                <label for="password" class="block text-sm font-medium text-slate-600 mb-1.5">Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input :type="show ? 'text' : 'password'" name="password" id="password" required
+                        class="w-full pl-10 pr-11 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-sm placeholder-slate-400 transition-all duration-200"
+                        placeholder="Enter your password">
+                    <button type="button" @click="show = !show"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5">
+                        <i class="fa-regular text-sm" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Forgot Password -->
-            <div class="flex justify-end mb-6">
+            <div class="flex justify-end mb-5">
                 <a href="/forgot-password"
-                    class="text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors">
+                    class="text-xs text-[#008080] hover:text-[#006666] font-medium transition-colors">
                     Forgot password?
                 </a>
             </div>
 
             <!-- Submit -->
             <button type="submit"
-                class="w-full py-3.5 px-6 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]">
-                Sign In
+                class="w-full py-2.5 px-5 bg-[#008080] text-white text-sm font-semibold rounded-xl shadow-md shadow-[#008080]/15 hover:bg-[#006666] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98]">
+                Log In
             </button>
         </form>
     </div>
-
-    <!-- Create Account -->
-    <!-- <p class="mt-6 text-center text-sm text-slate-500">
-        Don't have an account?
-        <a href="/register" class="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors">
-            Create account
-        </a>
-    </p> -->
 </x-guest-layout>
 
 <script>

@@ -11,21 +11,6 @@ export default defineConfig(({ mode }) => {
 
     return {
         plugins: [
-        {
-            name: 'mc-tunnel',
-            config: () => ({
-                server: {
-                    host: '0.0.0.0',
-                    port: 5173,
-                    hmr: {
-                        protocol: 'wss',
-                        host: 'collectible-overtightly-stefan.ngrok-free.dev',
-                        clientPort: 443,
-                        path: 'vite-hmr'
-                    }
-                }
-            })
-        },
             laravel({
                 input: ['resources/css/app.css', 'resources/js/app.js'],
                 refresh: true,
@@ -42,31 +27,7 @@ export default defineConfig(({ mode }) => {
                     globIgnores: ['**/manifest.webmanifest'],
                     runtimeCaching: [
                         {
-                            // Cache Google Fonts
-                            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
-                            handler: 'CacheFirst',
-                            options: {
-                                cacheName: 'google-fonts',
-                                expiration: {
-                                    maxEntries: 10,
-                                    maxAgeSeconds: 60 * 60 * 24 * 365, // 1 Year
-                                },
-                            },
-                        },
-                        {
-                            // Cache FontAwesome Icons
-                            urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/font-awesome\/.*/i,
-                            handler: 'CacheFirst',
-                            options: {
-                                cacheName: 'font-awesome',
-                                expiration: {
-                                    maxEntries: 5,
-                                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
-                                },
-                            },
-                        },
-                        {
-                            // Cache HTML pages (Dashboard, Logbook, Login)
+                            // Cache HTML pages (Dashboard, Logbook)
                             urlPattern: ({ request }) => request.mode === 'navigate',
                             handler: 'NetworkFirst',
                             options: {
@@ -75,11 +36,10 @@ export default defineConfig(({ mode }) => {
                                     maxEntries: 50,
                                     maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
                                 },
-                                networkTimeoutSeconds: 3,
                             },
                         },
                         {
-                            // Cache API requests
+                            // Cache API requests (if needed in future, though mostly handled by local storage logic)
                             urlPattern: ({ url }) => url.pathname.startsWith('/api'),
                             handler: 'NetworkFirst',
                             options: {
@@ -97,7 +57,7 @@ export default defineConfig(({ mode }) => {
                     short_name: 'HinaTourist',
                     description: 'Your premium tourist application experience.',
                     theme_color: '#6366f1',
-                    start_url: '/login',
+                    start_url: '/',
                     scope: '/',
                     display: 'standalone',
                     icons: [
@@ -112,10 +72,13 @@ export default defineConfig(({ mode }) => {
             }),
         ],
         server: {
+            host: 'localhost',
+            hmr: {
+                host: 'localhost',
+            },
             watch: {
                 ignored: ['**/storage/framework/views/**'],
             },
-            host: '127.0.0.1',
         },
     };
 });

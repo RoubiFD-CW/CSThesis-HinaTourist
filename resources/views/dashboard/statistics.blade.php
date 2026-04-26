@@ -32,10 +32,12 @@
     <div class="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-20">
         <div class="flex items-center gap-2">
             <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
-            <span class="font-bold text-slate-800">{{ config('app.name') }}</span>
+            <span
+                class="font-black text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">{{ config('app.name') }}</span>
         </div>
-        <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-700 p-2">
-            <i class="fa-solid fa-bars text-xl"></i>
+        <button @click="sidebarOpen = true" class="p-2 transition-transform hover:scale-110">
+            <i
+                class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]"></i>
         </button>
     </div>
 
@@ -51,9 +53,7 @@
             {{-- Page Header --}}
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">
-                        <i class="fa-solid fa-chart-column text-[#008080] mr-1"></i> Statistics
-                    </h1>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Statistics</h1>
                     <p class="text-slate-500 text-sm">Comprehensive analytics across all tourist destinations.</p>
                 </div>
                 <div class="flex items-center gap-3">
@@ -62,9 +62,9 @@
                             x-data="{ openYear: false, selectedYear: '{{ request('year', max(now()->year, 2026)) }}' }">
                             <input type="hidden" name="year" :value="selectedYear">
                             <button type="button" @click="openYear = !openYear" @click.away="openYear = false"
-                                class="flex items-center gap-2 pl-4 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#008080]/50 hover:bg-slate-50 focus:ring-4 focus:ring-[#008080]/10 focus:border-[#008080] outline-none transition-all text-sm font-bold text-slate-700 shadow-sm cursor-pointer whitespace-nowrap">
+                                class="flex items-center gap-2 pl-4 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#008080]/50 hover:bg-[#008080]/5 focus:ring-4 focus:ring-[#008080]/10 focus:border-[#008080] outline-none transition-all text-sm font-bold text-slate-700 shadow-sm cursor-pointer whitespace-nowrap">
                                 <i
-                                    class="fa-solid fa-calendar-day text-slate-500 group-hover:text-[#008080] transition-colors"></i>
+                                    class="fa-solid fa-calendar-day text-slate-400 group-hover:text-[#008080] transition-colors"></i>
                                 <span x-text="selectedYear + ' Report'"></span>
                             </button>
                             <!-- Custom Dropdown -->
@@ -73,8 +73,8 @@
                                 style="display: none;">
                                 <ul class="py-1">
                                     @for($i = max(now()->year, 2026); $i >= 2026; $i--)
-                                        <li class="px-4 py-2 hover:bg-[#008080]/5 hover:text-[#008080] cursor-pointer text-sm font-semibold text-slate-700 transition-colors text-center"
-                                            :class="selectedYear == '{{ $i }}' ? 'bg-[#008080]/10 text-[#008080]' : ''"
+                                        <li class="px-4 py-2 hover:bg-[#008080]/10 hover:text-[#008080] cursor-pointer text-sm font-semibold text-slate-700 transition-colors text-center"
+                                            :class="selectedYear == '{{ $i }}' ? 'bg-[#008080]/10 text-[#008080] font-bold' : ''"
                                             @click="selectedYear = '{{ $i }}'; openYear = false; $nextTick(() => { $el.closest('form').submit(); })">
                                             {{ $i }} Report
                                         </li>
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <button type="submit"
-                            class="group px-5 py-2.5 rounded-xl bg-[#008080] hover:bg-[#006666] text-white font-semibold transition-all shadow-md shadow-[#008080]/20 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2 text-sm whitespace-nowrap">
+                            class="group px-5 py-2.5 rounded-xl bg-[#008080] hover:bg-[#006666] active:bg-[#005555] text-white font-semibold transition-all shadow-md shadow-[#008080]/30 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm flex items-center gap-2 text-sm whitespace-nowrap">
                             <i class="fa-solid fa-file-excel group-hover:scale-110 transition-transform"></i>
                             Download VAR 2P
                         </button>
@@ -108,16 +108,18 @@
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Today</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.today ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.today ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.today)">{{ number_format($stats['today']) }}</span>
                     <span x-show="flashing.today" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
 
@@ -133,16 +135,18 @@
                             Month</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.month ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.month ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.month)">{{ number_format($stats['month']) }}</span>
                     <span x-show="flashing.month" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
 
@@ -158,16 +162,18 @@
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Tourists</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.tourist ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.tourist ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.tourist)">{{ number_format($stats['tourist']) }}</span>
                     <span x-show="flashing.tourist" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
 
@@ -183,16 +189,18 @@
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Locals</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.local ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.local ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.local)">{{ number_format($stats['local']) }}</span>
                     <span x-show="flashing.local" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
 
@@ -208,16 +216,18 @@
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Male</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.total_male ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.total_male ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.total_male)">{{ number_format($stats['total_male']) }}</span>
                     <span x-show="flashing.total_male" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
 
@@ -233,16 +243,18 @@
                             class="text-[11px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Female</span>
                     </div>
                     <span class="text-2xl font-black text-slate-800 tabular-nums transition-all duration-300"
-                        :class="flashing.total_female ? 'text-[#008080] scale-110' : ''"
+                        :class="flashing.total_female ? 'text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] scale-110' : ''"
                         x-text="fmt(stats.total_female)">{{ number_format($stats['total_female']) }}</span>
                     <span x-show="flashing.total_female" x-transition.opacity
                         class="absolute top-2 right-2 flex items-center gap-1">
                         <span class="relative flex h-2.5 w-2.5">
                             <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-60"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]"></span>
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 opacity-60"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30"></span>
                         </span>
-                        <span class="text-[9px] font-bold text-[#008080]">UPDATED</span>
+                        <span
+                            class="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]">UPDATED</span>
                     </span>
                 </div>
             </div>
@@ -458,7 +470,7 @@
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <template x-for="(mName, mIdx) in monthNames" :key="mIdx">
                                     <button @click="selectMonth(mIdx + 1)" :class="selectedMonth === (mIdx + 1)
-                                            ? 'bg-[#008080] text-white shadow-md shadow-[#008080]/20 ring-0'
+                                            ? 'bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 text-white shadow-md shadow-[#008080]/30 ring-0'
                                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'"
                                         class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap"
                                         x-text="mName"></button>
@@ -667,10 +679,10 @@
             {{-- SECTION 5: Forecast --}}
             {{-- ═══════════════════════════════════════════════ --}}
             <div x-data="forecastData()" x-init="initForecasts()"
-                class="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl shadow-xl shadow-[#008080]/20 border border-slate-800 overflow-hidden mb-8 text-white relative">
+                class="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl shadow-xl shadow-[#008080]/30 border border-slate-800 overflow-hidden mb-8 text-white relative">
                 <!-- Decorative AI background -->
                 <div
-                    class="absolute -top-24 -right-24 w-64 h-64 bg-[#008080] rounded-full blur-[80px] opacity-20 pointer-events-none">
+                    class="absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 rounded-full blur-[80px] opacity-20 pointer-events-none">
                 </div>
                 <div
                     class="absolute -bottom-24 -left-24 w-64 h-64 bg-violet-600 rounded-full blur-[80px] opacity-20 pointer-events-none">
@@ -703,7 +715,8 @@
                 <div class="p-6 sm:p-8 relative z-10">
                     <!-- Loading State -->
                     <div x-show="loading" class="flex flex-col items-center justify-center py-12">
-                        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-[#008080] mb-4"></i>
+                        <i
+                            class="fa-solid fa-circle-notch fa-spin text-4xl text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] mb-4"></i>
                         <p class="text-slate-300 font-medium animate-pulse">Running advanced machine learning models...
                         </p>
                     </div>
@@ -723,7 +736,7 @@
                         </p>
 
                         <button @click="initForecasts()"
-                            class="px-5 py-2.5 bg-[#008080]/20 hover:bg-[#008080]/40 border border-indigo-500/50 text-[#008080] rounded-xl text-sm font-bold transition-all focus:ring-2 focus:ring-indigo-500">
+                            class="px-5 py-2.5 bg-[#008080]/20 hover:bg-[#008080]/40 border border-indigo-500/50 text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080] rounded-xl text-sm font-bold transition-all focus:ring-2 focus:ring-indigo-500">
                             <i class="fa-solid fa-rotate-right mr-2"></i> Try Refreshing
                         </button>
                     </div>
@@ -748,7 +761,8 @@
                                 </div>
                                 <div class="flex items-center gap-1.5 mb-2 flex-wrap">
                                     <template x-if="spot.isFallback">
-                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                        <span
+                                            class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
                                             <i class="fa-solid fa-shield-halved"></i> FALLBACK ACTIVE
                                         </span>
                                     </template>
@@ -958,7 +972,7 @@
                         x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
                         {{-- Decorative blobs --}}
                         <div
-                            class="absolute -top-16 -right-16 w-40 h-40 bg-[#008080] rounded-full blur-[60px] opacity-20 pointer-events-none">
+                            class="absolute -top-16 -right-16 w-40 h-40 bg-gradient-to-br from-[#008080] to-[#008080] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] shadow-[#008080]/30 rounded-full blur-[60px] opacity-20 pointer-events-none">
                         </div>
                         <div
                             class="absolute -bottom-16 -left-16 w-40 h-40 bg-violet-600 rounded-full blur-[60px] opacity-20 pointer-events-none">
@@ -973,7 +987,7 @@
 
                             <div class="flex items-center gap-4 mb-6">
                                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 font-black text-xl"
-                                    :class="modalSpot.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30' : (modalSpot.rank === 2 ? 'bg-slate-300 text-slate-800' : (modalSpot.rank === 3 ? 'bg-amber-700 text-white' : 'bg-[#008080]/20 text-[#008080]'))">
+                                    :class="modalSpot.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30' : (modalSpot.rank === 2 ? 'bg-slate-300 text-slate-800' : (modalSpot.rank === 3 ? 'bg-amber-700 text-white' : 'bg-[#008080]/20 text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]'))">
                                     <span x-text="'#' + modalSpot.rank"></span>
                                 </div>
                                 <div>
@@ -1017,7 +1031,8 @@
                                 <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
                                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">95%
                                         Confidence Interval</p>
-                                    <span class="text-lg font-black text-[#008080]"
+                                    <span
+                                        class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-br from-[#008080] to-[#008080]"
                                         x-text="modalSpot.confidence_text"></span>
                                 </div>
                             </div>
@@ -1206,7 +1221,7 @@
 
                 calculateSeasonalMean(historicalData) {
                     if (!historicalData || historicalData.length === 0) return [];
-                    
+
                     // Group by month (0-11)
                     const monthlyGroups = {};
                     historicalData.forEach(h => {
@@ -1224,12 +1239,12 @@
                         const m = targetDate.getMonth();
                         const year = targetDate.getFullYear();
                         const monthStr = `${year}-${String(m + 1).padStart(2, '0')}`;
-                        
+
                         const values = monthlyGroups[m] || [];
-                        const mean = values.length > 0 
+                        const mean = values.length > 0
                             ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
                             : 0;
-                        
+
                         results.push({
                             month: monthStr,
                             predicted_visitors: mean,

@@ -10,9 +10,7 @@
                     <div class="flex-shrink-0">
                         <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
                     </div>
-                    <span
-                        :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 group-hover:text-cyan-900' : 'text-white group-hover:text-white/90'"
-                        class="font-heading font-bold text-2xl tracking-tighter transition-colors">
+                    <span class="font-heading font-black text-2xl tracking-tighter transition-colors text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">
                         {{ config('app.name') }}
                     </span>
                 </a>
@@ -35,7 +33,7 @@
 
                 @auth
                     <a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}"
-                        class="px-5 py-2.5 rounded-full bg-[#008080] text-white font-medium hover:bg-[#006666] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm">
+                        class="px-5 py-2.5 rounded-full bg-[#008080] shadow-md shadow-[#008080]/20 text-white font-medium hover:bg-[#006666] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm">
                         Dashboard
                     </a>
                 @else
@@ -52,10 +50,10 @@
             <!-- Mobile Menu Button -->
             <div class="-mr-2 flex items-center md:hidden">
                 <button @click="open = !open" type="button"
-                    :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
-                    class="inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-colors">
-                    <i class="fa-solid fa-bars text-xl" x-show="!open"></i>
-                    <i class="fa-solid fa-xmark text-xl" x-show="open" x-cloak></i>
+                    :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'hover:scale-110' : 'text-white hover:text-white/80'"
+                    class="inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-transform">
+                    <i class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]" x-show="!open"></i>
+                    <i class="fa-solid fa-xmark text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]" x-show="open" x-cloak></i>
                 </button>
             </div>
         </div>
@@ -76,7 +74,7 @@
             <div class="border-t border-slate-100 my-2 pt-2">
                 @auth
                     <a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}"
-                        class="block w-full text-center px-4 py-3 rounded-lg bg-[#008080] text-white font-medium shadow-md">Dashboard</a>
+                        class="block w-full text-center px-4 py-3 rounded-lg bg-[#008080] shadow-md shadow-[#008080]/20 text-white font-medium shadow-md">Dashboard</a>
                 @else
                     <div class="px-2">
                         <a href="{{ route('login') }}"

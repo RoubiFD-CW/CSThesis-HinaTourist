@@ -6,13 +6,16 @@
 @source '../**/*.js';
 
 @theme {
-    --font-heading: 'Playfair Display', serif;
-    --font-ui: 'Outfit', sans-serif;
+    --font-sans: 'Inter', sans-serif;
 
     --color-primary: #6366f1;
     /* Indigo-500 */
     --color-secondary: #0f172a;
     /* Slate-900 */
+
+    --color-brand: #167d77;
+    /* Dark Teal */
+    --color-brand-hover: #11605b;
 
     --animate-fade-up: fadeUp 0.6s ease-out forwards;
     --animate-slide-in: slideIn 0.4s ease-out forwards;
@@ -47,15 +50,6 @@ html {
 }
 
 body {
-    font-family: var(--font-ui);
+    font-family: 'Inter', sans-serif;
     @apply bg-slate-50 text-slate-900 antialiased;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: var(--font-heading);
 }

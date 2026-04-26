@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'PWA App') }} | Logbook</title>
     @include('partials.head')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -31,10 +29,12 @@
     <div class="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-20">
         <div class="flex items-center gap-2">
             <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
-            <span class="font-bold text-slate-800">{{ config('app.name') }}</span>
+            <span
+                class="font-black text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">{{ config('app.name') }}</span>
         </div>
-        <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-700 p-2">
-            <i class="fa-solid fa-bars text-xl"></i>
+        <button @click="sidebarOpen = true" class="p-2 transition-transform hover:scale-110">
+            <i
+                class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]"></i>
         </button>
     </div>
 
@@ -48,17 +48,16 @@
         </div>
 
         <div class="w-full px-0 sm:px-2 pt-0 pb-4" x-data="logbook()">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
-                        Visitor Logbook
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Visitor Logbook
                     </h1>
                     <p class="text-slate-500 text-sm">Record visitor check-ins and details.</p>
                 </div>
 
                 {{-- Sync Status Indicator --}}
                 <div
-                    class="flex items-center gap-3 bg-white/50 backdrop-blur px-4 py-2 rounded-xl border border-white/20">
+                    class="flex items-center gap-3 bg-white/50 backdrop-blur px-4 py-2 rounded-xl border border-white/20 shadow-sm h-10">
                     <span x-show="!online" class="text-amber-600 text-sm font-bold flex items-center gap-1.5" x-cloak>
                         <i class="fa-solid fa-wifi-slash"></i> Offline Mode
                     </span>
@@ -73,65 +72,72 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-6 items-stretch">
                 {{-- Log Entry Form --}}
-                <div class="lg:col-span-2">
+                <div class="md:col-span-2">
                     <div
-                        class="bg-white/80 backdrop-blur-sm p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 lg:sticky lg:top-4">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        class="bg-white/90 backdrop-blur-sm p-4 sm:p-5 rounded-[1.5rem] shadow-xl shadow-slate-200/50 border border-slate-200 lg:sticky lg:top-4">
+                        <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-pen-to-square text-[#008080]"></i> New Entry
                         </h2>
                         <form @submit.prevent="saveLog">
                             <!-- Visitor Type -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Are you:</label>
+                            <div class="mb-3">
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Are you:</label>
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="visitor_type" value="Local"
-                                            x-model="form.visitor_type" class="text-[#008080] focus:ring-[#008080]">
+                                            x-model="form.visitor_type"
+                                            class="text-[#008080] focus:ring-[#008080] w-3.5 h-3.5">
                                         <span class="text-sm text-slate-700">Local Resident</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="visitor_type" value="Foreign Tourist"
-                                            x-model="form.visitor_type" class="text-[#008080] focus:ring-[#008080]">
+                                            x-model="form.visitor_type"
+                                            class="text-[#008080] focus:ring-[#008080] w-3.5 h-3.5">
                                         <span class="text-sm text-slate-700">Foreign Tourist</span>
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Gender Count -->
-                            <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="grid grid-cols-2 gap-3 mb-3">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Male</label>
                                     <input type="text" inputmode="numeric" x-model="form.male_count" required
                                         placeholder="0" @input="validateNumber('male_count')"
-                                        class="w-full px-4 py-2.5 rounded-xl border outline-none transition-all"
+                                        class="w-full px-3 py-2 rounded-xl border outline-none transition-all text-sm"
                                         :class="errors.male_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080]'">
                                     <p x-show="errors.male_count" x-text="errors.male_count" x-cloak
-                                        class="text-xs text-rose-500 mt-1 flex items-center gap-1"></p>
+                                        class="text-[10px] text-rose-500 mt-1 flex items-center gap-1"></p>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Female</label>
                                     <input type="text" inputmode="numeric" x-model="form.female_count" required
                                         placeholder="0" @input="validateNumber('female_count')"
-                                        class="w-full px-4 py-2.5 rounded-xl border outline-none transition-all"
+                                        class="w-full px-3 py-2 rounded-xl border outline-none transition-all text-sm"
                                         :class="errors.female_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080]'">
                                     <p x-show="errors.female_count" x-text="errors.female_count" x-cloak
-                                        class="text-xs text-rose-500 mt-1 flex items-center gap-1"></p>
+                                        class="text-[10px] text-rose-500 mt-1 flex items-center gap-1"></p>
                                 </div>
                             </div>
 
                             <!-- Group Size (auto-computed) -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Group Size (Male +
                                     Female)</label>
-                                <div class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed"
+                                <div class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed text-sm"
+                                    :class="((parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0)) > 1000 ? 'border-rose-400 bg-rose-50 text-rose-600 font-bold' : ''"
                                     x-text="(parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0) || '0'">
                                 </div>
+                                <p x-show="((parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0)) > 1000"
+                                    class="text-[10px] text-rose-500 mt-1 font-bold" x-cloak>
+                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Max 1000 people.
+                                </p>
                             </div>
 
                             <!-- Origin -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Where are you from?</label>
                                 <div class="relative" x-data="{ 
                                         open: false, 
@@ -140,10 +146,10 @@
                                     }" @click.away="open = false">
 
                                     <div @click="open = !open" tabindex="0"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
+                                        class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
                                         <span x-text="form.origin || 'Select origin...'"
                                             :class="form.origin ? 'text-slate-900' : 'text-slate-500'"></span>
-                                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"
+                                        <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"
                                             :class="open ? 'rotate-180' : ''"></i>
                                     </div>
 
@@ -152,7 +158,7 @@
                                         style="display: none;">
                                         <template x-for="opt in options[form.visitor_type] || []" :key="opt">
                                             <div @click="selectOption(opt)"
-                                                class="px-4 py-2.5 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                class="px-3 py-2 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
                                                 :class="form.origin === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
                                                 x-text="opt"></div>
                                         </template>
@@ -161,7 +167,7 @@
                             </div>
 
                             <!-- Reason -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Reason for visit</label>
                                 <div class="relative" x-data="{ 
                                         open: false, 
@@ -170,10 +176,10 @@
                                     }" @click.away="open = false">
 
                                     <div @click="open = !open" tabindex="0"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
+                                        class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-sm">
                                         <span x-text="form.visit_reason || 'Select reason...'"
                                             :class="form.visit_reason ? 'text-slate-900' : 'text-slate-500'"></span>
-                                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"
+                                        <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"
                                             :class="open ? 'rotate-180' : ''"></i>
                                     </div>
 
@@ -182,7 +188,7 @@
                                         style="display: none;">
                                         <template x-for="opt in options" :key="opt">
                                             <div @click="selectOption(opt)"
-                                                class="px-4 py-2.5 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                class="px-3 py-2 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
                                                 :class="form.visit_reason === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
                                                 x-text="opt"></div>
                                         </template>
@@ -190,14 +196,14 @@
                                 </div>
                             </div>
 
-                            <div class="mb-4" x-show="form.visit_reason === 'Others'" x-transition>
+                            <div class="mb-3" x-show="form.visit_reason === 'Others'" x-transition>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Specify Reason</label>
                                 <input type="text" x-model="form.visit_reason_other" placeholder="Please specify"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all">
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all text-sm">
                             </div>
 
                             <!-- Dedicated Area (Interactive for Admin, Read-only for Attendants) -->
-                            <div class="mb-6">
+                            <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Dedicated Area</label>
 
                                 <div x-data="{
@@ -245,27 +251,27 @@
                                             @keydown.escape="if(isAdmin) { open = false; revertSearch(); }"
                                             @keydown.enter.prevent="if(isAdmin && filteredOptions.length > 0) selectOption(filteredOptions[0])"
                                             :placeholder="isAdmin ? 'Select or search an area' : ''"
-                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none transition-all"
+                                            class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none transition-all text-sm"
                                             :class="isAdmin ? 'cursor-text bg-white focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080]' : 'bg-slate-100 text-slate-500 cursor-not-allowed'"
                                             autocomplete="off">
                                         <i x-show="isAdmin"
-                                            class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform"
+                                            class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none transition-transform"
                                             :class="open ? 'rotate-180' : ''"></i>
 
                                         <!-- Dropdown Options -->
                                         <div x-show="isAdmin && open" x-transition.opacity.duration.200ms
-                                            class="absolute z-[100] w-full bottom-[calc(100%+4px)] bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto"
+                                            class="absolute z-[100] w-full bottom-[calc(100%+4px)] bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto"
                                             style="display: none;">
                                             <ul class="py-1 relative top-0 z-[100]">
                                                 <template x-for="option in filteredOptions" :key="option.value">
-                                                    <li class="px-4 py-2.5 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                    <li class="px-3 py-2 hover:bg-slate-50 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
                                                         :class="form.dedicated_area === option.value ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
                                                         @click="selectOption(option)">
                                                         <span x-text="option.label"></span>
                                                     </li>
                                                 </template>
                                                 <div x-show="filteredOptions.length === 0"
-                                                    class="px-4 py-3 text-sm text-slate-500 text-center">
+                                                    class="px-3 py-2 text-sm text-slate-500 text-center">
                                                     No matches found
                                                 </div>
                                             </ul>
@@ -275,180 +281,142 @@
                             </div>
 
                             <button type="submit"
-                                class="w-full py-3 bg-[#008080] hover:bg-[#006666] text-white font-bold rounded-xl transition-all shadow-lg shadow-[#008080]-500/20 active:scale-[0.98]">
-                                <i class="fa-solid fa-check-circle mr-2"></i> Log Entry
+                                class="w-full py-2.5 bg-[#008080] shadow-md shadow-[#008080]/20 hover:bg-[#006666] text-white text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
+                                <i class="fa-solid fa-check-circle mr-1.5"></i> Log Entry
                             </button>
                         </form>
                     </div>
                 </div>
 
                 {{-- Log List --}}
-                <div class="lg:col-span-3">
+                <div class="md:col-span-3 relative">
                     <div
-                        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="p-5 sm:p-6 border-b border-slate-100">
+                        class="md:absolute md:inset-0 w-full h-full bg-white/90 backdrop-blur-sm rounded-[1.5rem] shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="p-4 sm:p-5 border-b border-slate-100 shrink-0">
                             <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Recent Logs
                             </h2>
                         </div>
 
                         {{-- Mobile Card View --}}
-                        <div class="lg:hidden divide-y divide-slate-100">
-                            <template x-for="log in paginatedLogs" :key="log.id || log.local_id">
-                                <div class="p-4 hover:bg-slate-50/50 transition-colors">
+                        <div class="md:hidden divide-y divide-slate-100 overflow-y-auto max-h-[500px]">
+                            <template x-for="log in allLogsList" :key="log.id || log.local_id">
+                                <div class="p-3 hover:bg-slate-50/50 transition-colors">
                                     <div class="flex items-start justify-between gap-3">
                                         <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-slate-900 truncate" x-text="log.origin"></p>
-                                            <p class="text-xs text-slate-400 mt-0.5"
+                                            <p class="font-semibold text-slate-900 text-sm truncate"
+                                                x-text="log.origin"></p>
+                                            <p class="text-[10px] text-slate-400 mt-0.5"
                                                 x-text="log.visitor_type + ' • ' + log.dedicated_area"></p>
-                                            <div class="flex flex-col gap-1 mt-2 text-sm text-slate-500">
+                                            <div class="flex flex-col gap-0.5 mt-1.5 text-xs text-slate-500">
                                                 <span>Group: <span
                                                         x-text="(parseInt(log.male_count) || 0) + (parseInt(log.female_count) || 0)"></span>
                                                     (M:<span x-text="log.male_count"></span>, F:<span
                                                         x-text="log.female_count"></span>)</span>
-                                                <span class="text-xs text-slate-400"
+                                                <span class="text-[10px] text-slate-400"
                                                     x-text="log.visit_reason === 'Others' ? (log.visit_reason_other || 'Others') : log.visit_reason"></span>
                                             </div>
                                         </div>
                                         <div class="flex flex-col items-end gap-1">
-                                            <span class="text-xs py-0.5 px-2 rounded-full font-medium"
-                                                :class="log.pending ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-[#008080]'"
+                                            <span class="text-[10px] py-0.5 px-2 rounded-full font-medium"
+                                                :class="log.pending ? 'bg-amber-50 text-amber-600' : 'bg-teal-50 text-teal-600'"
                                                 x-text="log.pending ? 'Pending' : 'Synced'">
                                             </span>
-                                            <span class="text-xs text-slate-400"
+                                            <span class="text-[10px] text-slate-400"
                                                 x-text="new Date(log.visit_date || log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
                                         </div>
                                     </div>
                                 </div>
                             </template>
-                            <div x-show="allLogsList.length === 0" class="p-8 text-center text-slate-400">
+                            <div x-show="allLogsList.length === 0" class="p-6 text-center text-slate-400">
                                 <div class="flex flex-col items-center justify-center gap-2">
-                                    <i class="fa-solid fa-clipboard-list text-3xl opacity-20"></i>
-                                    <p>No logs found.</p>
+                                    <i class="fa-solid fa-clipboard-list text-2xl opacity-20"></i>
+                                    <p class="text-xs">No logs found.</p>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Desktop Table View --}}
-                        <div class="hidden lg:block overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
+                        <div
+                            class="hidden md:block overflow-auto flex-1 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300">
+                            <table class="w-full text-left border-collapse min-w-[500px]">
+                                <thead class="sticky top-0 bg-slate-50/95 backdrop-blur z-10 shadow-sm">
                                     <tr
-                                        class="bg-slate-50/50 text-xs uppercase text-slate-500 border-b border-slate-100">
-                                        <th class="px-6 py-4 font-semibold">Origin / Type</th>
-                                        <th class="px-6 py-4 font-semibold">Group Stats</th>
-                                        <th class="px-6 py-4 font-semibold">Reason</th>
-                                        <th class="px-6 py-4 font-semibold text-right">Time</th>
+                                        class="text-[11px] uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                        <th class="px-4 py-3 font-semibold">Origin / Type</th>
+                                        <th class="px-4 py-3 font-semibold">Group Size</th>
+                                        <th class="px-4 py-3 font-semibold">Reason</th>
+                                        <th class="px-4 py-3 font-semibold text-right">Time</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-50">
-                                    <template x-for="log in paginatedLogs" :key="log.id || log.local_id">
+                                    <template x-for="log in allLogsList" :key="log.id || log.local_id">
                                         <tr class="hover:bg-slate-50/50 transition-colors group">
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center gap-3">
+                                            <td class="px-4 py-2.5">
+                                                <div class="flex items-center gap-2.5">
                                                     <div
-                                                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:shadow-sm transition-all">
-                                                        <i class="fa-solid fa-user text-xs"></i>
+                                                        class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:shadow-sm transition-all shrink-0">
+                                                        <i class="fa-solid fa-user text-[10px]"></i>
                                                     </div>
-                                                    <div>
-                                                        <p class="font-medium text-slate-900" x-text="log.origin"></p>
-                                                        <p class="text-xs text-slate-400" x-text="log.visitor_type"></p>
+                                                    <div class="min-w-0">
+                                                        <p class="font-medium text-slate-900 text-sm truncate"
+                                                            x-text="log.origin"></p>
+                                                        <p class="text-[10px] text-slate-400 truncate"
+                                                            x-text="log.visitor_type"></p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex flex-col text-sm text-slate-600">
+                                            <td class="px-4 py-2.5">
+                                                <div class="flex flex-col text-xs text-slate-600">
                                                     <span class="font-medium">Total: <span
                                                             x-text="(parseInt(log.male_count) || 0) + (parseInt(log.female_count) || 0)"></span></span>
-                                                    <span class="text-xs text-slate-400">
-                                                        Male: <span x-text="log.male_count"></span>, Female: <span
+                                                    <span class="text-[10px] text-slate-400">
+                                                        M: <span x-text="log.male_count"></span>, F: <span
                                                             x-text="log.female_count"></span>
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4">
-                                                <div class="text-sm text-slate-600"
+                                            <td class="px-4 py-2.5">
+                                                <div class="text-xs text-slate-600 truncate max-w-[120px]"
                                                     x-text="log.visit_reason === 'Others' ? (log.visit_reason_other || 'Others') : log.visit_reason">
                                                 </div>
-                                                <div class="text-xs text-slate-400 mt-0.5" x-text="log.dedicated_area">
+                                                <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[120px]"
+                                                    x-text="log.dedicated_area">
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <div class="flex flex-col items-end gap-1">
-                                                    <span class="text-xs font-bold"
-                                                        :class="log.pending ? 'text-amber-500' : 'text-emerald-500'"
+                                            <td class="px-4 py-2.5 text-right">
+                                                <div class="flex flex-col items-end gap-0.5">
+                                                    <span class="text-[10px] font-bold"
+                                                        :class="log.pending ? 'text-amber-500' : 'text-teal-600'"
                                                         x-text="log.pending ? 'Pending' : 'Synced'"></span>
-                                                    <span class="text-xs text-slate-400"
+                                                    <span class="text-[10px] text-slate-400 whitespace-nowrap"
                                                         x-text="new Date(log.visit_date || log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
                                                 </div>
                                             </td>
                                         </tr>
                                     </template>
                                     <tr x-show="allLogsList.length === 0">
-                                        <td colspan="4" class="px-6 py-12 text-center text-slate-400 bg-slate-50/30">
-                                            <div class="flex flex-col items-center justify-center gap-2">
-                                                <i class="fa-solid fa-clipboard-list text-3xl opacity-20"></i>
-                                                <p>No logs found.</p>
+                                        <td colspan="4" class="px-4 py-8 text-center text-slate-400 bg-slate-50/30">
+                                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                                <i class="fa-solid fa-clipboard-list text-2xl opacity-20"></i>
+                                                <p class="text-sm">No logs found.</p>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-
-                        {{-- Pagination Controls --}}
-                        <div x-show="totalPages > 1"
-                            class="p-4 border-t border-slate-100 bg-white/50 flex items-center justify-between gap-4">
-                            <div class="text-xs text-slate-500 font-medium">
-                                Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button @click="currentPage--" :disabled="currentPage <= 1"
-                                    class="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors">
-                                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
-                                </button>
-                                <button @click="currentPage++" :disabled="currentPage >= totalPages"
-                                    class="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors">
-                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Toast Notification --}}
-            <div x-show="showToast"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-2"
-                class="fixed bottom-5 right-5 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px]"
-                :class="toastType === 'success' ? 'bg-[#008080] text-white shadow-[#008080]/20' : 'bg-rose-600 text-white shadow-rose-500/20'"
-                style="display: none;" x-cloak>
-                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <i class="fa-solid" :class="toastType === 'success' ? 'fa-check' : 'fa-triangle-exclamation'"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm" x-text="toastType === 'success' ? 'Success' : 'Error'"></h4>
-                    <p class="text-xs text-white/90" x-text="toastMessage"></p>
-                </div>
-                <button @click="showToast = false" class="ml-auto text-white/60 hover:text-white">
-                    <i class="fa-solid fa-times"></i>
-                </button>
+
             </div>
-        </div>
     </main>
 
     <script>
         function logbook() {
             return {
                 online: navigator.onLine,
-                showToast: false,
-                toastMessage: '',
-                toastType: 'success',
                 form: {
                     visitor_type: 'Foreign Tourist',
                     group_size: 1,
@@ -569,6 +537,26 @@
                         return;
                     }
 
+                    if (this.form.group_size > 1000) {
+                        this.errors.male_count = 'Maximum group size is 1000 people.';
+                        return;
+                    }
+
+                    if (!this.form.origin) {
+                        this.toast('Please select where you are from.', 'error');
+                        return;
+                    }
+
+                    if (!this.form.dedicated_area) {
+                        this.toast('Please select a dedicated area.', 'error');
+                        return;
+                    }
+
+                    if (this.form.visit_reason === 'Others' && !this.form.visit_reason_other.trim()) {
+                        this.toast('Please specify your reason for visit.', 'error');
+                        return;
+                    }
+
                     const logEntry = {
                         ...this.form,
                         local_id: Date.now(),
@@ -638,10 +626,7 @@
                 },
 
                 toast(message, type = 'success') {
-                    this.toastMessage = message;
-                    this.toastType = type;
-                    this.showToast = true;
-                    setTimeout(() => { this.showToast = false; }, 3500);
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { message, type } }));
                 }
             }
         }

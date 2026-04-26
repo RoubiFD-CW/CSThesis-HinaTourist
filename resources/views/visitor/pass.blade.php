@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Site Pass') }} | Visitor Entry</title>
     @include('partials.head')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -51,17 +49,17 @@
                                     <label class="block text-sm font-medium text-slate-700 mb-2">Are you:</label>
                                     <div class="flex items-center gap-4">
                                         <label
-                                            class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-indigo-300 transition-colors">
+                                            class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-[#008080]/40 transition-colors">
                                             <input type="radio" name="visitor_type" value="Local"
                                                 x-model="form.visitor_type"
-                                                class="text-indigo-600 focus:ring-indigo-500">
+                                                class="text-[#008080] focus:ring-[#008080]">
                                             <span class="text-sm text-slate-700">Local Resident</span>
                                         </label>
                                         <label
-                                            class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-indigo-300 transition-colors">
+                                            class="flex items-center gap-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-[#008080]/40 transition-colors">
                                             <input type="radio" name="visitor_type" value="Foreign Tourist"
                                                 x-model="form.visitor_type"
-                                                class="text-indigo-600 focus:ring-indigo-500">
+                                                class="text-[#008080] focus:ring-[#008080]">
                                             <span class="text-sm text-slate-700">Foreign Tourist</span>
                                         </label>
                                     </div>
@@ -74,7 +72,7 @@
                                         <input type="text" inputmode="numeric" x-model="form.male_count" required
                                             placeholder="0" @input="validateNumber('male_count')"
                                             class="w-full px-4 py-2.5 rounded-xl border outline-none transition-all"
-                                            :class="errors.male_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500'">
+                                            :class="errors.male_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080]'">
                                         <p x-show="errors.male_count" x-text="errors.male_count" x-cloak
                                             class="text-xs text-rose-500 mt-1"></p>
                                     </div>
@@ -83,7 +81,7 @@
                                         <input type="text" inputmode="numeric" x-model="form.female_count" required
                                             placeholder="0" @input="validateNumber('female_count')"
                                             class="w-full px-4 py-2.5 rounded-xl border outline-none transition-all"
-                                            :class="errors.female_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500'">
+                                            :class="errors.female_count ? 'border-rose-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/50' : 'border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080]'">
                                         <p x-show="errors.female_count" x-text="errors.female_count" x-cloak
                                             class="text-xs text-rose-500 mt-1"></p>
                                     </div>
@@ -94,32 +92,40 @@
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Group Size (Male
                                         + Female)</label>
                                     <div class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed"
+                                        :class="((parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0)) > 1000 ? 'border-rose-400 bg-rose-50 text-rose-600' : ''"
                                         x-text="(parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0) || '0'">
                                     </div>
+                                    <p x-show="((parseInt(form.male_count, 10) || 0) + (parseInt(form.female_count, 10) || 0)) > 1000"
+                                        class="text-xs text-rose-500 mt-1 font-bold" x-cloak>
+                                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Maximum of 1000 people per
+                                        group only.
+                                    </p>
                                 </div>
 
                                 <!-- Origin -->
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Where are you from?</label>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Where are you
+                                        from?</label>
                                     <div class="relative" x-data="{ 
                                             open: false, 
                                             options: { 'Local': ['Within the province', 'Other province'], 'Foreign Tourist': ['Foreign country residence'] }, 
                                             selectOption(val) { form.origin = val; this.open = false; } 
-                                        }" 
-                                        @click.away="open = false">
+                                        }" @click.away="open = false">
                                         <div @click="open = !open" tabindex="0"
-                                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 outline-none transition-all cursor-pointer flex justify-between items-center text-base">
-                                             <span x-text="form.origin || 'Select origin...'" :class="form.origin ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
-                                             <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]" :class="open ? 'rotate-180' : ''"></i>
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-base">
+                                            <span x-text="form.origin || 'Select origin...'"
+                                                :class="form.origin ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
+                                            <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]"
+                                                :class="open ? 'rotate-180' : ''"></i>
                                         </div>
-                                        <div x-show="open" x-transition.opacity.duration.200ms 
-                                             class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
-                                             style="display: none;">
+                                        <div x-show="open" x-transition.opacity.duration.200ms
+                                            class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                            style="display: none;">
                                             <template x-for="opt in options[form.visitor_type] || []" :key="opt">
-                                                <div @click="selectOption(opt)" 
-                                                     class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer text-sm text-slate-700 transition-colors" 
-                                                     :class="form.origin === opt ? 'bg-indigo-50 text-indigo-600 font-medium' : ''" 
-                                                     x-text="opt"></div>
+                                                <div @click="selectOption(opt)"
+                                                    class="px-4 py-2.5 hover:bg-[#008080]/10 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                    :class="form.origin === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
+                                                    x-text="opt"></div>
                                             </template>
                                         </div>
                                     </div>
@@ -127,27 +133,28 @@
 
                                 <!-- Reason -->
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Reason for visit</label>
-                                    <div class="relative" 
-                                        x-data="{ 
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Reason for
+                                        visit</label>
+                                    <div class="relative" x-data="{ 
                                             open: false, 
                                             options: ['Vacation or Leisure', 'Business', 'Others'],
                                             selectOption(val) { form.visit_reason = val; this.open = false; } 
-                                        }" 
-                                        @click.away="open = false">
+                                        }" @click.away="open = false">
                                         <div @click="open = !open" tabindex="0"
-                                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 outline-none transition-all cursor-pointer flex justify-between items-center text-base">
-                                             <span x-text="form.visit_reason || 'Select reason...'" :class="form.visit_reason ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
-                                             <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]" :class="open ? 'rotate-180' : ''"></i>
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[#008080]/20 focus-within:border-[#008080] outline-none transition-all cursor-pointer flex justify-between items-center text-base">
+                                            <span x-text="form.visit_reason || 'Select reason...'"
+                                                :class="form.visit_reason ? 'text-slate-900' : 'text-slate-500 font-normal'"></span>
+                                            <i class="fa-solid fa-chevron-down text-slate-400 transition-transform text-sm relative top-[2px]"
+                                                :class="open ? 'rotate-180' : ''"></i>
                                         </div>
-                                        <div x-show="open" x-transition.opacity.duration.200ms 
-                                             class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
-                                             style="display: none;">
+                                        <div x-show="open" x-transition.opacity.duration.200ms
+                                            class="absolute z-50 w-full mt-1 top-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                                            style="display: none;">
                                             <template x-for="opt in options" :key="opt">
-                                                <div @click="selectOption(opt)" 
-                                                     class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer text-sm text-slate-700 transition-colors" 
-                                                     :class="form.visit_reason === opt ? 'bg-indigo-50 text-indigo-600 font-medium' : ''" 
-                                                     x-text="opt"></div>
+                                                <div @click="selectOption(opt)"
+                                                    class="px-4 py-2.5 hover:bg-[#008080]/10 hover:text-[#008080] cursor-pointer text-sm text-slate-700 transition-colors"
+                                                    :class="form.visit_reason === opt ? 'bg-[#008080]/10 text-[#008080] font-medium' : ''"
+                                                    x-text="opt"></div>
                                             </template>
                                         </div>
                                     </div>
@@ -157,11 +164,11 @@
                                 <div class="mb-4" x-show="form.visit_reason === 'Others'" x-transition>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Specify Reason</label>
                                     <input type="text" x-model="form.visit_reason_other" placeholder="Please specify"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] outline-none transition-all">
                                 </div>
 
                                 <button type="submit"
-                                    class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] mt-4 flex items-center justify-center gap-2">
+                                    class="w-full py-3 bg-[#008080] hover:bg-[#006666] text-white font-bold rounded-xl transition-all shadow-lg shadow-[#008080]/20 active:scale-[0.98] mt-4 flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-qrcode"></i> Generate Entry Pass
                                 </button>
                             </form>
@@ -178,30 +185,30 @@
                             class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-4">
                             <i class="fa-solid fa-check text-2xl"></i>
                         </div>
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">You're All Set!</h2>
+                        <h2 class="text-2xl font-semibold text-slate-800 mb-2">You're All Set!</h2>
                         <p class="text-slate-500 mb-6">Please show this QR code to the site attendant.</p>
 
                         <div
-                            class="bg-white p-4 rounded-xl border-2 border-dashed border-slate-300 inline-block mb-6 shadow-sm">
+                            class="bg-white p-6 rounded-xl border-2 border-dashed border-slate-300 inline-block mb-6 shadow-sm">
                             <canvas id="qrcode-canvas" class="mx-auto"></canvas>
                         </div>
 
                         <div
-                            class="bg-slate-50 p-4 rounded-xl text-left text-sm text-slate-600 border border-slate-100">
-                            <p class="font-bold text-slate-800 mb-2 border-b border-slate-200 pb-2">Visitor Details:</p>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><span class="text-slate-400">Type:</span> <span x-text="form.visitor_type"></span>
+                            class="bg-[#008080]/5 p-5 rounded-xl text-left text-sm text-slate-800 border border-[#008080]/10">
+                            <p class="font-semibold text-slate-900 mb-3 border-b border-[#008080]/10 pb-2">Visitor Details:</p>
+                            <div class="flex flex-col gap-2.5">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><span class="text-[#006666] font-medium">Type:</span> <span class="text-slate-800" x-text="form.visitor_type"></span></div>
+                                    <div><span class="text-[#006666] font-medium">Size:</span> <span class="text-slate-800" x-text="form.group_size"></span></div>
                                 </div>
-                                <div><span class="text-slate-400">Size:</span> <span x-text="form.group_size"></span>
-                                </div>
-                                <div class="col-span-2"><span class="text-slate-400">Origin:</span> <span
-                                        x-text="form.origin"></span></div>
+                                <div><span class="text-[#006666] font-medium">Origin:</span> <span class="text-slate-800" x-text="form.origin"></span></div>
+                                <div><span class="text-[#006666] font-medium">Spot:</span> <span class="text-slate-800" x-text="spotName"></span></div>
                             </div>
                         </div>
 
                         <button @click="resetForm"
-                            class="mt-8 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors text-sm">
-                            <i class="fa-solid fa-arrow-left mr-1"></i> Create Another Pass
+                            class="mt-8 text-[#008080] font-medium hover:text-[#006666] transition-colors text-sm flex items-center justify-center w-full">
+                            <i class="fa-solid fa-arrow-left mr-2"></i> Create Another Pass
                         </button>
                     </div>
                 </div>
@@ -266,6 +273,21 @@
 
                     if (this.form.group_size < 1) {
                         this.errors.male_count = 'Total group must be at least 1 person.';
+                        return;
+                    }
+
+                    if (this.form.group_size > 1000) {
+                        this.errors.male_count = 'Maximum group size is 1000 people.';
+                        return;
+                    }
+
+                    if (!this.form.origin) {
+                        alert("Please select where you are from.");
+                        return;
+                    }
+
+                    if (this.form.visit_reason === 'Others' && !this.form.visit_reason_other.trim()) {
+                        alert("Please specify your reason for visit.");
                         return;
                     }
 

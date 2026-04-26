@@ -105,9 +105,9 @@ class AuthController extends Controller
 
         // Send OTP via email
         try {
-            Mail::raw("Your password reset code is: {$otp}\n\nThis code expires in 10 minutes.\n\nIf you didn't request this, please ignore this email.", function ($message) use ($email) {
+            Mail::send('emails.reset-otp', ['otp' => $otp], function ($message) use ($email) {
                 $message->to($email)
-                    ->subject('Password Reset Code');
+                    ->subject('HinaTourist - Password Reset Code');
             });
 
             Log::info("Password reset OTP sent to {$email}: {$otp}");
@@ -124,6 +124,38 @@ class AuthController extends Controller
                 'message' => 'Failed to send verification code. Please try again.',
             ], 500);
         }
+    }
+
+    /**
+     * Verify OTP (Step 2 of reset)
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $stored = $request->session()->get('password_reset_otp');
+
+        if (!$stored || $stored['email'] !== $request->email) {
+            return response()->json(['success' => false, 'message' => 'Invalid or expired verification code.'], 422);
+        }
+
+        if (now()->greaterThan($stored['expires_at'])) {
+            $request->session()->forget('password_reset_otp');
+            return response()->json(['success' => false, 'message' => 'Verification code has expired.'], 422);
+        }
+
+        if ($stored['code'] !== $request->otp) {
+            return response()->json(['success' => false, 'message' => 'Invalid verification code.'], 422);
+        }
+
+        // Tag the session as 'otp_verified' so we can allow password reset in next step
+        $stored['verified'] = true;
+        $request->session()->put('password_reset_otp', $stored);
+
+        return response()->json(['success' => true, 'message' => 'Code verified! Please set your new password.']);
     }
 
     /**
@@ -152,6 +184,14 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'No verification code found. Please request a new one.',
+            ], 422);
+        }
+
+        // Check if verified
+        if (empty($stored['verified']) || !$stored['verified']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification required. Please verify your code first.',
             ], 422);
         }
 

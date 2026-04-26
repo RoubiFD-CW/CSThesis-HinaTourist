@@ -24,8 +24,8 @@ Route::get('/', function () {
         return redirect(Auth::user()->is_admin ? '/admin/dashboard' : '/user/dashboard');
     }
 
-    // For guests, go to login
-    return redirect()->route('login');
+    // For guests, show landing page
+    return view('home');
 });
 
 // Destinations Page
@@ -51,6 +51,7 @@ Route::middleware('guest')->group(function () {
     // Forgot Password / Reset
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password/send-otp', [AuthController::class, 'sendResetOtp']);
+    Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtp']);
     Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword']);
 });
 
@@ -60,12 +61,33 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Profile Routes (Available for both Admin and Attendant)
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    // ========================================
+    // Email Verification Routes
+    // ========================================
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect('/user/dashboard')->with('success', 'Email verified successfully! You can now access your dashboard.');
+    })->middleware(['signed'])->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['throttle:6,1'])->name('verification.send');
+
     Route::get(
         '/user/dashboard',
         function () {
             return view('dashboard.user');
         }
-    )->name('user.dashboard');
+    )->middleware('verified')->name('user.dashboard');
 
     Route::get('/admin/dashboard', function () {
         $totalLogs = \App\Models\VisitorLog::count();
@@ -183,6 +205,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/admin/attendants', [\App\Http\Controllers\Admin\SiteAttendantController::class, 'store'])
         ->middleware('is_admin')->name('admin.attendants.store');
+
+    Route::post('/admin/attendants/{id}/resend', [\App\Http\Controllers\Admin\SiteAttendantController::class, 'resend'])
+        ->middleware('is_admin')->name('admin.attendants.resend');
+
+    Route::put('/admin/attendants/{id}', [\App\Http\Controllers\Admin\SiteAttendantController::class, 'update'])
+        ->middleware('is_admin')->name('admin.attendants.update');
 
     Route::delete('/admin/attendants/{id}', [\App\Http\Controllers\Admin\SiteAttendantController::class, 'destroy'])
         ->middleware('is_admin')->name('admin.attendants.destroy');

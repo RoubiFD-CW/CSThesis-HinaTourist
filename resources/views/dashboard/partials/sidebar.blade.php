@@ -13,7 +13,8 @@
             <div class="shrink-0">
                 <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
             </div>
-            <span class="text-xl font-heading font-bold text-slate-800 tracking-tight">
+            <span
+                class="text-xl font-heading font-black tracking-tight text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">
                 {{ config('app.name') }}
             </span>
         </div>
@@ -25,6 +26,8 @@
 
     <div class="flex flex-col justify-between flex-1 px-4 pb-8">
         <nav class="space-y-3">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Main Menu</p>
+
             {{-- Dashboard Link (Dynamic based on role) --}}
             <a href="{{ Auth::user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}"
                 class="flex items-center px-4 py-3 text-slate-600 transition-colors transform rounded-xl hover:bg-slate-100 hover:text-slate-900 {{ request()->routeIs('admin.dashboard') || request()->routeIs('user.dashboard') ? 'bg-[#008080]/10 text-[#008080] font-medium' : '' }}">
@@ -53,36 +56,40 @@
                 <i class="fa-solid fa-address-book w-6"></i>
                 <span class="mx-2 font-medium">Logbook</span>
             </a>
-
-            {{-- Common Links --}}
-            <!-- <a href="#" class="flex items-center px-4 py-3 text-slate-600 transition-colors transform rounded-xl hover:bg-slate-100 hover:text-slate-900">
-                <i class="fa-solid fa-gear w-6"></i>
-                <span class="mx-2 font-medium">Settings</span>
-            </a> -->
         </nav>
 
-        <div class="mt-6 border-t border-slate-100 pt-6">
-            <div class="p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-100 hover:border-slate-200 transition-all duration-300">
-                <div class="flex items-center gap-3 pl-0.5">
-                    <div class="w-10 h-10 rounded-full bg-[#008080]/10 flex items-center justify-center text-[#008080] shrink-0 border border-[#008080]/20 shadow-sm">
-                        <i class="fa-solid fa-circle-user text-lg"></i>
+        <div class="mt-auto pt-6 border-t border-slate-100">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Profile</p>
+            <div x-data="{ hover: false }">
+                <a href="{{ route('profile.show') }}" @mouseenter="hover = true" @mouseleave="hover = false"
+                    class="block p-4 rounded-2xl mb-3 border transition-all duration-300 focus:outline-none {{ request()->routeIs('profile.show') ? 'bg-[#008080]/10 border-[#008080]/20' : 'bg-slate-50 border-slate-100' }}"
+                    :class="hover ? 'bg-[#008080]/10 border-[#008080]/20' : '{{ request()->routeIs('profile.show') ? 'bg-[#008080]/10 border-[#008080]/20' : 'bg-slate-50 border-slate-100' }}'">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div
+                                class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border border-[#008080]/20 bg-[#008080]/10 text-[#008080]">
+                                <i class="fa-solid fa-circle-user text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold truncate leading-tight text-[#008080]">
+                                    {{ Auth::user()->name }}
+                                </p>
+                                <p class="text-[10px] font-medium text-slate-500 truncate mt-0.5">
+                                    {{ Auth::user()->email }}
+                                </p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-[10px] transition-colors text-[#008080]"></i>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 truncate tracking-tight leading-tight">
-                            {{ Auth::user()->name }}
-                        </p>
-                        <p class="text-[10px] font-black text-[#008080] uppercase tracking-widest mt-1 opacity-80 leading-tight">
-                            {{ Auth::user()->email }}
-                        </p>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="flex w-full items-center justify-center gap-2 px-4 py-3 text-slate-500 font-bold text-sm uppercase tracking-wider border border-slate-200 rounded-xl transition-all duration-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 hover:shadow-sm group active:scale-[0.98]">
-                    <i class="fa-solid fa-power-off group-hover:rotate-90 transition-transform duration-500"></i>
+                    class="flex w-full items-center justify-center gap-2 px-4 py-3 text-slate-500 font-bold text-xs uppercase tracking-wider border border-slate-200 rounded-xl transition-all duration-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 group active:scale-[0.98]">
+                    <i
+                        class="fa-solid fa-right-from-bracket group-hover:translate-x-1 transition-transform duration-300"></i>
                     <span>Log Out</span>
                 </button>
             </form>
@@ -90,3 +97,5 @@
     </div>
 </aside>
 
+{{-- Global Toast System --}}
+@include('dashboard.partials.toast')

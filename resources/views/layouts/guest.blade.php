@@ -7,18 +7,17 @@
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Hinatuan Tour') }} | Authentication</title>
+    <title>{{ config('app.name', 'HinaTourist') }} | Authentication</title>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.webmanifest">
-    <meta name="theme-color" content="#22d3ee">
+    <meta name="theme-color" content="#008080">
     <link rel="icon" type="image/png" href="{{ asset('hinatourist-logo.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Icons -->
@@ -29,42 +28,55 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <style>
-        [x-cloak] {
-            display: none !important;
+        [x-cloak] { display: none !important; }
+
+        .guest-bg {
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(22, 125, 119, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(79, 195, 247, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(26, 75, 159, 0.04) 0%, transparent 50%);
         }
+
+        /* Unified focus style */
+        input:focus {
+            border-color: #008080 !important;
+            box-shadow: 0 0 0 3px rgba(22, 125, 119, 0.15) !important;
+            outline: none !important;
+        }
+
+        /* Fade-in animation */
+        @keyframes authFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .auth-card { animation: authFadeIn 0.5s ease-out forwards; }
     </style>
 </head>
 
 <body x-data="{ showToast: false, toastMessage: '' }"
     @toast.window="toastMessage = $event.detail; showToast = true; setTimeout(() => showToast = false, 3000)"
-    class="font-sans text-slate-900 antialiased min-h-screen flex items-center justify-center p-4 bg-white">
+    class="guest-bg font-sans text-slate-900 antialiased min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:py-12">
 
-    <!-- Toast Notification (Global) -->
+    <!-- Toast Notification -->
     <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 transform -translate-y-4"
-        x-transition:enter-end="opacity-100 transform translate-y-0"
+        x-transition:enter-start="opacity-0 -translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform -translate-y-4"
-        class="fixed top-5 left-1/2 transform -translate-x-1/2 z-[100] bg-rose-500 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 whitespace-nowrap shadow-rose-500/20 ring-1 ring-white/10"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-4"
+        class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] bg-rose-500 text-white px-5 py-2.5 rounded-full shadow-xl flex items-center gap-2.5 whitespace-nowrap ring-1 ring-white/10"
         style="display: none;" x-cloak>
-        <i class="fa-solid fa-wifi-slash text-white"></i>
+        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
         <span x-text="toastMessage" class="font-medium text-sm"></span>
     </div>
 
-    <!-- Simple Container -->
-    <div class="w-full max-w-md relative z-10">
-        <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden animate-fade-up">
-            <div class="p-6 sm:p-8">
-                <!-- Back to Home Button -->
-                <div class="mb-6 hidden md:block">
-                    <a href="/"
-                        class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-500 transition-all bg-slate-50 rounded-full hover:bg-slate-100 hover:text-slate-800 group">
-                        <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
-                        <span>Back to Home</span>
-                    </a>
-                </div>
+    <!-- Card Container -->
+    <div class="w-full max-w-[420px] relative z-10">
 
+        <!-- Auth Card -->
+        <div class="auth-card bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-slate-100/80 overflow-hidden">
+            <div class="px-6 py-7 sm:px-8 sm:py-8">
                 @if (isset($slot))
                     {{ $slot }}
                 @else
@@ -73,8 +85,6 @@
             </div>
         </div>
     </div>
-
-
 
 </body>
 

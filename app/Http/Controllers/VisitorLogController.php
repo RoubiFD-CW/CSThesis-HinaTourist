@@ -28,7 +28,7 @@ class VisitorLogController extends Controller
                 }
             }
 
-            return response()->json($query->limit(50)->get());
+            return response()->json($query->get());
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('VisitorLog Index Error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch logs: ' . $e->getMessage()], 500);
@@ -39,7 +39,7 @@ class VisitorLogController extends Controller
     {
         $request->validate([
             'visitor_type'       => 'required|string|in:Local,Foreign Tourist',
-            'group_size'         => 'required|integer|min:1',
+            'group_size'         => 'required|integer|min:1|max:1000',
             'male_count'         => 'required|integer|min:0',
             'female_count'       => 'required|integer|min:0',
             'origin'             => 'required|string|in:Within the province,Other province,Foreign country residence',
