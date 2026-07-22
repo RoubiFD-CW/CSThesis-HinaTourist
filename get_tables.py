@@ -1,3 +1,4 @@
+import os
 import sys
 import pandas as pd
 import numpy as np
@@ -6,10 +7,12 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-sys.path.append(r"C:\Users\Ruby\OneDrive\Desktop\Forecast\sarimaforecastingATO")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SARIMA_DIR = os.path.join(BASE_DIR, "sarimaforecasting")
+sys.path.append(SARIMA_DIR)
 from mainone import find_best_sarima_order, interpolate_zeros, cap_outliers, calculate_mape
 
-df = pd.read_csv(r"C:\Users\Ruby\OneDrive\Desktop\Forecast\sarimaforecastingATO\processed_data.csv")
+df = pd.read_csv(os.path.join(SARIMA_DIR, "processed_data.csv"))
 df['Date'] = pd.to_datetime(df['Date'])
 
 attractions = [
