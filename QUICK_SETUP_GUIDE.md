@@ -21,9 +21,9 @@ Ensure the following software is installed on your computer before starting:
 
 ### Step 1: Database Setup
 1. Start your **MySQL Server** (e.g., in XAMPP or Laragon).
-2. Create a database named `pwasystemapp`:
+2. Create a database named `hinatourist`:
    ```sql
-   CREATE DATABASE pwasystemapp;
+   CREATE DATABASE hinatourist;
    ```
 
 ---
@@ -97,15 +97,21 @@ To run the complete system, launch the following 3 commands in separate terminal
 ## 3. How to Use & Test the System
 
 ### A. Tourist Workflow (Public Entry)
-1. Open `http://localhost:8080/pass` in any browser.
+1. Open `http://localhost:8080/pass` in any mobile browser or desktop.
 2. Select destination, enter male/female headcount, origin type, and visit purpose.
 3. Click **Generate Visitor Pass** to receive the encoded QR entry pass.
 
-### B. Site Attendant Workflow (Logbook & Offline PWA)
-1. Navigate to `http://localhost:8080/login`.
-2. Log in using attendant credentials.
-3. Go to **Visitor Logbook** (`/logbook`) to record tourist arrivals.
-4. **PWA / Offline Mode:** Install the app on mobile ("Add to Home Screen"). Logbook entries made without internet are saved locally in IndexedDB and automatically synced to the server when connection is restored.
+### B. Site Attendant Workflow (Mobile PWA & Offline Logbook)
+1. **Accessing on Mobile / Smartphone:**
+   - Open mobile browser (Chrome on Android or Safari on iOS) and navigate to `http://<your-server-ip>:8080/login`.
+   - Log in using attendant credentials.
+2. **Install as Native Mobile App (PWA):**
+   - **Android (Chrome):** Tap the 3-dot menu $\rightarrow$ Select **"Install App"** or **"Add to Home Screen"**.
+   - **iOS (Safari):** Tap the Share button $\rightarrow$ Tap **"Add to Home Screen"**.
+   - The HinaTourist app icon will appear on the phone's home screen, functioning like a native mobile app.
+3. **Daily Logging & Offline Mode:**
+   - Stationed attendants access **Visitor Logbook** (`/logbook`) to record tourist arrivals.
+   - If cellular connection is lost, entries are saved locally in browser storage (IndexedDB). Once internet connectivity returns, logs automatically synchronize to the database.
 
 ### C. Admin Workflow (Analytics & Forecasting)
 1. Log in with admin credentials at `http://localhost:8080/login`.

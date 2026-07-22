@@ -40,7 +40,7 @@ The system combines a **Progressive Web Application (PWA)** for on-site tourist 
                       ▼                              ▼
        ┌─────────────────────────────┐┌──────────────────────────────┐
        │      MySQL Database         ││   Python FastAPI Microservice│
-       │    (pwasystemapp DB)        ││   (SARIMA Time-Series ML)    │
+       │    (hinatourist DB)         ││   (SARIMA Time-Series ML)    │
        └─────────────────────────────┘└──────────────────────────────┘
 ```
 
@@ -52,9 +52,11 @@ The system combines a **Progressive Web Application (PWA)** for on-site tourist 
 - **QR Pass Generation:** Tourists scan location-specific QR codes placed at entrance gates, redirecting to `/pass` without requiring an account or application download.
 - **Instant Digital Pass:** Displays an encoded pass confirming visitor group details and date of entry.
 
-#### 2. Offline-First PWA Logbook
-- **Field Resiliency:** Site attendants stationed at destinations with weak or non-existent cellular coverage can log individual or group arrivals seamlessly.
-- **Intelligent Synchronization:** Logs created offline are held securely in client-side storage. The PWA detects restored connectivity and automatically syncs logs to the backend API (`/api/logs`). Manual sync buttons ensure data integrity.
+#### 2. Mobile PWA & Offline-First Logbook (Site Attendant)
+- **Accessible on Mobile Smartphones:** Site attendants can open the application on iOS (Safari) or Android (Chrome) smartphones and tablets.
+- **Native Mobile App Installation ("Add to Home Screen"):** Attendants can tap **"Add to Home Screen"** or **"Install App"** in their mobile browser. The HinaTourist app installs directly onto the phone's home screen with an app launcher icon, operating full-screen just like a native mobile application.
+- **Field Resiliency & Offline Mode:** Attendants stationed at remote destinations with weak or non-existent cellular coverage can log visitor arrivals continuously. Entries are buffered locally in browser storage (IndexedDB).
+- **Automatic Background Synchronization:** As soon as cellular network or Wi-Fi connectivity returns, the PWA background sync automatically transmits queued records to the server API (`/api/logs`). Manual sync buttons are also provided.
 
 #### 3. Real-Time Admin Analytics & Demographics
 - **Demographic Categorization:** Aggregates visitors into specific origin tiers: *Within Province*, *Other Provinces*, and *Foreign Country Residence*.
@@ -127,7 +129,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=pwasystemapp
+DB_DATABASE=hinatourist
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -148,9 +150,9 @@ php artisan key:generate
 
 #### Step 6: Create Database & Execute Migrations
 1. Ensure your MySQL server is running (e.g., start MySQL in XAMPP / Laragon).
-2. Create a database named `pwasystemapp` in your MySQL database management tool (phpMyAdmin, HeidiSQL, or MySQL CLI):
+2. Create a database named `hinatourist` in your MySQL database management tool (phpMyAdmin, HeidiSQL, or MySQL CLI):
    ```sql
-   CREATE DATABASE IF NOT EXISTS pwasystemapp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE DATABASE IF NOT EXISTS hinatourist CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 3. Run the database migrations and seeders:
    ```bash

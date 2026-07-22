@@ -41,9 +41,9 @@ Ensure you have installed:
 ### 2. Installation & Setup
 
 #### A. Database Setup
-Create a MySQL database named `pwasystemapp`:
+Create a MySQL database named `hinatourist`:
 ```sql
-CREATE DATABASE pwasystemapp;
+CREATE DATABASE hinatourist;
 ```
 
 #### B. Laravel Web Application
