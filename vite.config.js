@@ -62,10 +62,16 @@ export default defineConfig(({ mode }) => {
                     display: 'standalone',
                     icons: [
                         {
-                            src: '/hinatourist-logo.png',
+                            src: '/mobile-final.svg',
                             sizes: 'any',
-                            type: 'image/png',
+                            type: 'image/svg+xml',
                             purpose: 'any'
+                        },
+                        {
+                            src: '/mobile-final.svg',
+                            sizes: 'any',
+                            type: 'image/svg+xml',
+                            purpose: 'maskable'
                         }
                     ]
                 }

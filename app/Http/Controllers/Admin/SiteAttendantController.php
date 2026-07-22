@@ -57,6 +57,7 @@ class SiteAttendantController extends Controller
             'password' => 'hinatourist',
             'dedicated_area' => $request->dedicated_area,
             'is_admin' => false,
+            'must_change_password' => true,
         ]);
 
         $user->sendEmailVerificationNotification();

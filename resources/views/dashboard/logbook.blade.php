@@ -334,6 +334,12 @@
                                     <p class="text-xs">No logs found.</p>
                                 </div>
                             </div>
+                            <div x-show="nextPageUrl" class="p-4 border-t border-slate-100">
+                                <button @click="loadMoreLogs()" :disabled="loadingMore" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                                    <span x-show="!loadingMore">Load More Logs</span>
+                                    <span x-show="loadingMore"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</span>
+                                </button>
+                            </div>
                         </div>
 
                         {{-- Desktop Table View --}}
@@ -403,6 +409,14 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr x-show="nextPageUrl">
+                                        <td colspan="4" class="px-4 py-4 text-center border-t border-slate-100">
+                                            <button @click="loadMoreLogs()" :disabled="loadingMore" class="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 mx-auto">
+                                                <span x-show="!loadingMore">Load More Logs</span>
+                                                <span x-show="loadingMore"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</span>
+                                            </button>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -433,6 +447,8 @@
                 errors: { male_count: '', female_count: '' },
                 currentPage: 1,
                 perPage: 5,
+                nextPageUrl: null,
+                loadingMore: false,
 
                 get totalPages() {
                     return Math.ceil(this.allLogsList.length / this.perPage) || 1;
@@ -485,17 +501,31 @@
                     this.fetchLogs();
                 },
 
-                fetchLogs() {
+                fetchLogs(url = '{{ route("api.logs.index") }}') {
                     if (!this.online) return;
 
-                    axios.get('{{ route("api.logs.index") }}')
+                    axios.get(url)
                         .then(response => {
-                            this.logs = response.data;
+                            if (url.includes('page=') && !url.includes('page=1')) {
+                                this.logs = [...this.logs, ...response.data.data];
+                            } else {
+                                this.logs = response.data.data;
+                            }
+                            this.nextPageUrl = response.data.next_page_url;
                             localStorage.setItem('cached_logs', JSON.stringify(this.logs));
+                            this.loadingMore = false;
                         })
                         .catch(err => {
                             console.error('Fetch failed, using cache if available:', err);
+                            this.loadingMore = false;
                         });
+                },
+
+                loadMoreLogs() {
+                    if (this.nextPageUrl && !this.loadingMore) {
+                        this.loadingMore = true;
+                        this.fetchLogs(this.nextPageUrl);
+                    }
                 },
 
                 validateNumber(field) {
@@ -590,9 +620,15 @@
                     // Filter out logs that are already syncing to avoid race conditions
                     const queue = this.pendingLogs.filter(log => !log.syncing);
 
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
                     queue.forEach(log => {
                         log.syncing = true;
-                        axios.post('{{ route("api.logs.store") }}', log)
+                        axios.post('{{ route("api.logs.store") }}', log, {
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            }
+                        })
                             .then(response => {
                                 // Remove from pending logs
                                 this.pendingLogs = this.pendingLogs.filter(l => l.local_id !== log.local_id);

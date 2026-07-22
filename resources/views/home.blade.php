@@ -12,6 +12,14 @@
             <div class="absolute inset-0 bg-slate-900/40 via-cyan-900/20 to-transparent bg-gradient-to-b"></div>
         </div>
 
+        <!-- Top-left Logo Overlay
+            <div class="absolute top-5 left-6 z-20 flex items-center gap-1">
+                <img src="{{ asset('final-logo-notext.svg') }}" class="h-14 w-auto object-contain drop-shadow-lg"
+                    alt="HinaTourist Icon">
+                <img src="{{ asset('final-logo-text.svg') }}" class="h-9 w-auto object-contain drop-shadow-lg"
+                    alt="HinaTourist">
+            </div> -->
+
         <!-- Hero Content -->
         <div class="relative z-10 text-center max-w-5xl px-4 animate-fade-up">
             <h1
@@ -34,10 +42,10 @@
                         class="w-full bg-transparent border-none focus:ring-0 text-slate-700 placeholder-slate-400 font-medium text-sm md:text-base">
                 </div>
                 <!-- <div class="flex-shrink-0 flex items-center px-4 md:border-r border-slate-200 h-12 border-t md:border-t-0">
-                        <i class="fa-regular fa-calendar text-slate-400 mr-3"></i>
-                        <input type="text" placeholder="Add dates"
-                            class="w-full bg-transparent border-none focus:ring-0 text-slate-700 placeholder-slate-400 font-medium cursor-pointer text-sm md:text-base">
-                    </div> -->
+                                                    <i class="fa-regular fa-calendar text-slate-400 mr-3"></i>
+                                                    <input type="text" placeholder="Add dates"
+                                                        class="w-full bg-transparent border-none focus:ring-0 text-slate-700 placeholder-slate-400 font-medium cursor-pointer text-sm md:text-base">
+                                                </div> -->
                 <button
                     class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold h-12 px-8 rounded-xl md:rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-search"></i>
@@ -47,103 +55,10 @@
         </div>
 
         <!-- Scroll Down Indicator
-                <div class="absolute bottom-50 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70">
-                    <i class="fa-solid fa-chevron-down text-2xl"></i>
-                </div> -->
+                                            <div class="absolute bottom-50 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70">
+                                                <i class="fa-solid fa-chevron-down text-2xl"></i>
+                                            </div> -->
     </section>
-
-    <!-- Categories Section -->
-    <!-- <section id="categories" class="py-16 md:py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-12 md:mb-16">
-                    <span class="text-cyan-600 font-bold tracking-widest uppercase text-xs mb-3 block">Browse by
-                        Category</span>
-                    <h2 class="font-heading font-black text-3xl md:text-4xl text-slate-900">Find Your Perfect Getaway</h2>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"> -->
-    <!-- Category 1 -->
-    <!-- <div
-                        class="group relative rounded-3xl overflow-hidden aspect-[4/5] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Hotels"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                            <div
-                                class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-3 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300 text-white">
-                                <i class="fa-solid fa-hotel text-lg"></i>
-                            </div>
-                            <h3 class="text-white font-bold text-xl">Top Hotels</h3>
-                            <p
-                                class="text-slate-300 text-sm mt-1 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100">
-                                Luxury stays worldwide
-                            </p>
-                        </div>
-                    </div> -->
-
-    <!-- Category 2 -->
-    <!-- <div
-                        class="group relative rounded-3xl overflow-hidden aspect-[4/5] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Beaches"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                            <div
-                                class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-3 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 text-white">
-                                <i class="fa-solid fa-umbrella-beach text-lg"></i>
-                            </div>
-                            <h3 class="text-white font-bold text-xl">Beaches</h3>
-                            <p
-                                class="text-slate-300 text-sm mt-1 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100">
-                                Sun, sand, and sea
-                            </p>
-                        </div>
-                    </div> -->
-
-    <!-- Category 3 -->
-    <!-- <div
-                        class="group relative rounded-3xl overflow-hidden aspect-[4/5] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Mountains"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                            <div
-                                class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 text-white">
-                                <i class="fa-solid fa-mountain-sun text-lg"></i>
-                            </div>
-                            <h3 class="text-white font-bold text-xl">Nature</h3>
-                            <p
-                                class="text-slate-300 text-sm mt-1 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100">
-                                Hiking & Adventure
-                            </p>
-                        </div>
-                    </div> -->
-
-    <!-- Category 4 -->
-    <!-- <div
-                        class="group relative rounded-3xl overflow-hidden aspect-[4/5] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Urban"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                            <div
-                                class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-3 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300 text-white">
-                                <i class="fa-solid fa-city text-lg"></i>
-                            </div>
-                            <h3 class="text-white font-bold text-xl">Urban</h3>
-                            <p
-                                class="text-slate-300 text-sm mt-1 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100">
-                                City lights & Nightlife
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> -->
 
     <!-- Popular Destinations Carousel Style -->
     <section id="destinations" class="py-16 md:py-20 bg-slate-50 relative overflow-hidden">
@@ -278,15 +193,15 @@
                     tucked-away waterfalls and pristine sandbars.
                 </p>
                 <!-- <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <button
-                            class="px-8 py-4 rounded-xl bg-white text-slate-900 font-bold flex items-center justify-center gap-3 hover:bg-slate-200 transition-colors">
-                            <i class="fa-brands fa-apple text-xl"></i> App Store
-                        </button>
-                        <button
-                            class="px-8 py-4 rounded-xl bg-cyan-600 text-white font-bold flex items-center justify-center gap-3 hover:bg-cyan-700 transition-colors">
-                            <i class="fa-brands fa-google-play text-xl"></i> Google Play
-                        </button>
-                    </div> -->
+                                                    <button
+                                                        class="px-8 py-4 rounded-xl bg-white text-slate-900 font-bold flex items-center justify-center gap-3 hover:bg-slate-200 transition-colors">
+                                                        <i class="fa-brands fa-apple text-xl"></i> App Store
+                                                    </button>
+                                                    <button
+                                                        class="px-8 py-4 rounded-xl bg-cyan-600 text-white font-bold flex items-center justify-center gap-3 hover:bg-cyan-700 transition-colors">
+                                                        <i class="fa-brands fa-google-play text-xl"></i> Google Play
+                                                    </button>
+                                                </div> -->
             </div>
             <div class="flex-1 relative">
                 <!-- Map Image with Hover Effect -->

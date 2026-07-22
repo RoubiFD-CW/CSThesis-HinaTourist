@@ -25,7 +25,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #167d77 0%, #0f5f5a 100%);
+            background: linear-gradient(135deg, #008080 0%, #006666 100%);
             padding: 32px 24px;
             text-align: center;
         }
@@ -82,7 +82,7 @@
         .otp-code {
             font-size: 36px;
             font-weight: 800;
-            color: #167d77;
+            color: #008080;
             letter-spacing: 0.2em;
             margin: 0;
             font-family: 'Courier New', Courier, monospace;

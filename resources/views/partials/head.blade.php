@@ -1,8 +1,10 @@
 <!-- <link rel="manifest" href="/build/manifest.webmanifest"> -->
 <link rel="manifest" href="/build/manifest.webmanifest" crossorigin="use-credentials">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="theme-color" content="#6366f1">
-<link rel="icon" type="image/png" href="{{ asset('hinatourist-logo.png') }}">
+<link rel="icon" type="image/svg+xml" href="{{ asset('mobile-final.svg') }}">
+<link rel="apple-touch-icon" href="{{ asset('mobile-final.svg') }}">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">

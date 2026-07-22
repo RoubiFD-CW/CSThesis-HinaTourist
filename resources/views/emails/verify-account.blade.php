@@ -25,7 +25,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #167d77 0%, #0f5f5a 100%);
+            background: linear-gradient(135deg, #008080 0%, #006666 100%);
             padding: 32px 24px;
             text-align: center;
         }
@@ -74,7 +74,7 @@
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            color: #167d77;
+            color: #008080;
             letter-spacing: 0.08em;
             margin-bottom: 14px;
         }
@@ -83,6 +83,7 @@
             margin-bottom: 10px;
             font-size: 13px;
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
@@ -93,12 +94,16 @@
         .detail-key {
             font-weight: 600;
             color: #64748b;
-            min-width: 100px;
+            min-width: 90px;
+            flex-shrink: 0;
         }
 
         .detail-value {
             color: #1e293b;
             font-weight: 600;
+            word-break: break-all;
+            flex: 1;
+            min-width: 0;
         }
 
         .action-container {
@@ -109,13 +114,13 @@
         .button {
             display: inline-block;
             padding: 14px 32px;
-            background-color: #167d77;
+            background-color: #008080;
             color: #ffffff !important;
             text-decoration: none;
             border-radius: 12px;
             font-weight: 700;
             font-size: 14px;
-            box-shadow: 0 4px 12px rgba(22, 125, 119, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 128, 128, 0.25);
         }
 
         .note {
@@ -182,8 +187,7 @@
             </div>
 
             <div class="note">
-                <strong>Security Note:</strong> We recommend changing your default password after your first login via
-                your Profile settings.
+                <strong>Security Note:</strong> For your security, you will be required to change your default password upon your first login.
             </div>
 
             <p class="sign-off">Thank you,<br>The HinaTourist Team</p>

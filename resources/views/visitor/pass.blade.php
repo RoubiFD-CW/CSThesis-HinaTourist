@@ -197,10 +197,8 @@
                             class="bg-[#008080]/5 p-5 rounded-xl text-left text-sm text-slate-800 border border-[#008080]/10">
                             <p class="font-semibold text-slate-900 mb-3 border-b border-[#008080]/10 pb-2">Visitor Details:</p>
                             <div class="flex flex-col gap-2.5">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div><span class="text-[#006666] font-medium">Type:</span> <span class="text-slate-800" x-text="form.visitor_type"></span></div>
-                                    <div><span class="text-[#006666] font-medium">Size:</span> <span class="text-slate-800" x-text="form.group_size"></span></div>
-                                </div>
+                                <div><span class="text-[#006666] font-medium">Type:</span> <span class="text-slate-800" x-text="form.visitor_type"></span></div>
+                                <div><span class="text-[#006666] font-medium">Size:</span> <span class="text-slate-800" x-text="form.group_size"></span></div>
                                 <div><span class="text-[#006666] font-medium">Origin:</span> <span class="text-slate-800" x-text="form.origin"></span></div>
                                 <div><span class="text-[#006666] font-medium">Spot:</span> <span class="text-slate-800" x-text="spotName"></span></div>
                             </div>

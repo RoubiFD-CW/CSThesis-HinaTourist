@@ -1,3 +1,16 @@
+# HinaTourist Deployment Notes
+
+> [!IMPORTANT]
+> **Queue Worker Timeout for SARIMA:**
+> The SARIMA ML retraining process runs as a background queue job and can take several minutes to complete. 
+> Laravel's default queue timeout is 60 seconds, which will kill the job prematurely.
+> **When running the queue worker, you MUST use the `--timeout=600` flag:**
+> `php artisan queue:work --timeout=600`
+> 
+> *The `config/queue.php` has already been updated to set the `retry_after` database queue property to 600 seconds.*
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

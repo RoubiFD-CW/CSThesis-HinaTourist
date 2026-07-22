@@ -62,6 +62,38 @@ class AuthController extends Controller
     }
 
     // ========================================
+    // Force Password Change
+    // ========================================
+
+    public function showForcePasswordChange()
+    {
+        return view('auth.force-change-password');
+    }
+
+    public function forcePasswordUpdate(Request $request)
+    {
+        $request->validate([
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[^A-Za-z0-9]/',
+            ],
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase letter, one number, and one special character.',
+        ]);
+
+        $user = auth()->user();
+        $user->password = $request->password;
+        $user->must_change_password = false;
+        $user->save();
+
+        return redirect()->route('user.dashboard')->with('success', 'Password successfully updated.');
+    }
+
+    // ========================================
     // Forgot Password / Reset Password
     // ========================================
 

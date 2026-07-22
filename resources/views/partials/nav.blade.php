@@ -5,14 +5,11 @@
         <div class="flex justify-between h-20 items-center">
 
             <!-- Logo -->
-            <div class="flex-shrink-0 flex items-center gap-2">
-                <a href="{{ url('/') }}" class="flex items-center gap-2 group">
-                    <div class="flex-shrink-0">
-                        <img src="{{ asset('hinatourist-logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
-                    </div>
-                    <span class="font-heading font-black text-2xl tracking-tighter transition-colors text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]">
-                        {{ config('app.name') }}
-                    </span>
+            <div class="flex-shrink-0 flex items-center">
+                <a href="{{ url('/') }}" class="flex items-center gap-1 group">
+                    <img src="{{ asset('ht-final-logo.svg') }}"
+                        class="h-48 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        alt="HinaTourist">
                 </a>
             </div>
 
@@ -24,9 +21,7 @@
                 <a href="{{ request()->routeIs('destinations') ? url('/home') : '#destinations' }}"
                     :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
                     class="font-medium transition-colors text-sm uppercase tracking-wide">Destinations</a>
-                <!-- <a href="#categories"
-                    :class="scroll ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
-                    class="font-medium transition-colors text-sm uppercase tracking-wide">Categories</a> -->
+
                 <!-- <a href="#about"
                     :class="scroll ? 'text-cyan-700 hover:text-cyan-900' : 'text-white hover:text-white/80'"
                     class="font-medium transition-colors text-sm uppercase tracking-wide">About</a> -->
@@ -52,8 +47,10 @@
                 <button @click="open = !open" type="button"
                     :class="scroll || {{ request()->routeIs('destinations') ? 'true' : 'false' }} ? 'hover:scale-110' : 'text-white hover:text-white/80'"
                     class="inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-transform">
-                    <i class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]" x-show="!open"></i>
-                    <i class="fa-solid fa-xmark text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]" x-show="open" x-cloak></i>
+                    <i class="fa-solid fa-bars text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]"
+                        x-show="!open"></i>
+                    <i class="fa-solid fa-xmark text-xl text-transparent bg-clip-text bg-[linear-gradient(to_bottom,#008080,#1A4B9F)]"
+                        x-show="open" x-cloak></i>
                 </button>
             </div>
         </div>
@@ -68,8 +65,7 @@
                 class="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-[#008080] hover:bg-[#008080]/10 transition-colors">Home</a>
             <a href="{{ request()->routeIs('destinations') ? url('/home') : '#destinations' }}"
                 class="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-[#008080] hover:bg-[#008080]/10 transition-colors">Destinations</a>
-            <a href="#categories"
-                class="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-[#008080] hover:bg-[#008080]/10 transition-colors">Categories</a>
+
 
             <div class="border-t border-slate-100 my-2 pt-2">
                 @auth

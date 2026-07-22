@@ -18,6 +18,7 @@ export default function dashboard() {
         pendingLogs: [],
         currentPage: 1,
         itemsPerPage: 5,
+        lastErrorTime: 0,
 
         get allLogs() {
             return [...this.pendingLogs, ...this.logs];
@@ -88,7 +89,7 @@ export default function dashboard() {
             // We attempt fetch even if offline, relying on SW cache or eventual failure
             axios.get(cfg.logIndexUrl)
                 .then(res => {
-                    this.logs = res.data;
+                    this.logs = res.data.data ? res.data.data : res.data;
                     localStorage.setItem('cached_logs', JSON.stringify(this.logs));
                 })
                 .catch(err => {
@@ -138,11 +139,19 @@ export default function dashboard() {
                     this.closeScanner();
                     this.toast('Visitor Verified & Logged: ' + data.origin, 'success');
                 } else {
-                    this.toast('Invalid QR Code.', 'error');
+                    this.showScanError('Invalid QR Code.');
                 }
             } catch (e) {
                 console.error(e);
-                this.toast('Error reading QR Code.', 'error');
+                this.showScanError('Error reading QR Code.');
+            }
+        },
+
+        showScanError(message) {
+            const now = Date.now();
+            if (now - this.lastErrorTime > 2500) {
+                this.lastErrorTime = now;
+                this.toast(message, 'error');
             }
         },
 
@@ -427,9 +436,15 @@ export default function dashboard() {
         syncLogs() {
             if (this.pendingLogs.length === 0) return;
             const queue = this.pendingLogs.filter(log => !log.syncing);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
             queue.forEach(log => {
                 log.syncing = true;
-                axios.post(cfg.logStoreUrl, log)
+                axios.post(cfg.logStoreUrl, log, {
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
                     .then(res => {
                         this.pendingLogs = this.pendingLogs.filter(l => l.local_id !== log.local_id);
                         this.saveToStorage();

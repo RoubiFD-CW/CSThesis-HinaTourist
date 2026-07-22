@@ -28,7 +28,7 @@ class VisitorLogController extends Controller
                 }
             }
 
-            return response()->json($query->get());
+            return response()->json($query->paginate(50));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('VisitorLog Index Error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch logs: ' . $e->getMessage()], 500);

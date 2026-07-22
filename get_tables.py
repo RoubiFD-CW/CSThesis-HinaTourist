@@ -1,50 +1,89 @@
-import urllib.request
-import json
-import ssl
-import datetime
+import sys
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.arima.model import ARIMA
+import warnings
 
-def fetch_data(attraction):
+warnings.filterwarnings('ignore')
+
+sys.path.append(r"C:\Users\Ruby\OneDrive\Desktop\Forecast\sarimaforecastingATO")
+from mainone import find_best_sarima_order, interpolate_zeros, cap_outliers, calculate_mape
+
+df = pd.read_csv(r"C:\Users\Ruby\OneDrive\Desktop\Forecast\sarimaforecastingATO\processed_data.csv")
+df['Date'] = pd.to_datetime(df['Date'])
+
+attractions = [
+    "ENCHANTED RIVER",
+    "LODESTONE SHORES RESORT",
+    "BACULIN AMAZING SAND BAR",
+    "DAVINCE HIDDEN PARADISE",
+    "HARIP OCEANSIDE WHITE BEACH",
+    "ROCK ISLAND RESORT",
+    "AMPARITAS INTEGRATED NATURE FARM",
+    "SIBADAN FISH CAGE AND RESORT"
+]
+
+for attraction in attractions:
     print(f"\n### {attraction.title()}\n")
-    url = "http://127.0.0.1:8000/forecast"
-    payload = {"attraction_name": attraction, "months_ahead": 12}
-    data = json.dumps(payload).encode('utf-8')
-    req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+    attr_df = df[df['Attraction'] == attraction].sort_values('Date')
+    attr_df.set_index('Date', inplace=True)
+    ts_raw = attr_df['Visitors'].resample('MS').mean().fillna(0)
     
-    try:
-        context = ssl._create_unverified_context()
-        with urllib.request.urlopen(req, context=context) as response:
-            res_data = json.loads(response.read().decode())
-    except Exception as e:
-        print(f"Error fetching data for {attraction}: {e}")
-        return
-
-    hist_monthly = {item['month']: item.get('visitors', item.get('visitors', 0)) for item in res_data.get('historical_monthly', [])}
-    hist_test = {item['month']: item.get('visitors', 0) for item in res_data.get('historical_test', [])}
-    test_pred = {item['month']: item.get('visitors', item.get('predicted', 0)) for item in res_data.get('test_predicted', [])}
-    forecast = {item['month']: item.get('predicted', item.get('visitors', 0)) for item in res_data.get('forecasts', [])}
-
+    ts_working = ts_raw.copy()
+    zero_count = int((ts_working == 0).sum())
+    if zero_count > 0:
+        ts_working = interpolate_zeros(ts_working)
+    ts_working = cap_outliers(ts_working)
+    
+    split_idx = int(len(ts_working) * 0.8)
+    train_ts = ts_working[:split_idx]
+    test_ts = ts_working[split_idx:]
+    
+    train_ts_log = np.log1p(train_ts)
+    best_order, best_seasonal = find_best_sarima_order(train_ts_log)
+    
+    model = ARIMA(
+        train_ts_log,
+        order=best_order,
+        seasonal_order=best_seasonal,
+        enforce_stationarity=False,
+        enforce_invertibility=False
+    )
+    res = model.fit()
+    
+    # In-sample predictions
+    train_fitted_log = res.fittedvalues
+    train_fitted = np.expm1(train_fitted_log)
+    
+    # Out-of-sample predictions
+    forecast_log = res.get_forecast(steps=len(test_ts))
+    test_fitted = np.expm1(forecast_log.predicted_mean)
+    
+    # Test MAPE
+    test_mape_final = calculate_mape(test_ts, test_fitted)
+    
     print("| Month | Actual Visitors | Predicted Visitors | Absolute Error | Absolute Percentage Error (APE) |")
     print("|---|---|---|---|---|")
     
-    all_2025_months = [f"2025-{str(i).zfill(2)}-01" for i in range(1, 13)]
+    # We want exactly the last 12 months (e.g., Jan-Dec 2025)
+    last_12_months = ts_working.index[-12:]
     
-    for month in all_2025_months:
-        actual = hist_test.get(month, hist_monthly.get(month))
-        predicted = test_pred.get(month, forecast.get(month))
-        
-        month_str = datetime.datetime.strptime(month, "%Y-%m-%d").strftime("%B %Y")
-        
-        if actual is not None and predicted is not None:
-            abs_err = abs(actual - predicted)
-            ape = (abs_err / actual) * 100 if actual != 0 else 0
-            print(f"| {month_str} | {int(actual):,} | {int(predicted):,} | {int(abs_err):,} | {ape:.2f}% |")
+    for date_val in last_12_months:
+        if date_val in train_ts.index:
+            actual = train_ts[date_val]
+            pred = train_fitted[date_val]
         else:
-            actual_str = f"{int(actual):,}" if actual is not None else "Missing"
-            pred_str = f"{int(predicted):,}" if predicted is not None else "Missing"
+            actual = test_ts[date_val]
+            pred = test_fitted[date_val]
             
-            # If for some reason predicting missing or actual missing, let's format it properly
-            # if we have actual but no pred, usually they want the dash
-            print(f"| {month_str} | {actual_str} | {pred_str} | - | - |")
+        actual_int = int(round(actual))
+        pred_int = int(round(pred))
+        abs_err = abs(actual_int - pred_int)
+        ape = (abs_err / actual_int * 100) if actual_int != 0 else 0
         
-for place in ["HARIP OCEANSIDE WHITE BEACH", "BACULIN AMAZING SAND BAR", "ROCK ISLAND RESORT"]:
-    fetch_data(place)
+        month_str = date_val.strftime("%B")
+        
+        print(f"| {month_str} | {actual_int:,} | {pred_int:,} | {abs_err:,} | {ape:.2f}% |")
+        
+    print(f"| **Overall Model Benchmark** | — | — | — | **{test_mape_final:.2f}% MAPE** |")
+

@@ -698,17 +698,58 @@
                             model.</p>
                     </div>
 
-                    <!-- Month Selector -->
-                    <div x-show="!loading && !error" x-cloak class="relative w-full sm:w-auto">
-                        <select x-model="selectedMonth"
-                            class="w-full sm:w-auto bg-white/10 border border-white/20 text-white text-sm rounded-xl px-4 py-2 hover:bg-white/20 focus:ring-2 focus:ring-indigo-500 focus:outline-none appearance-none pr-10 cursor-pointer transition-colors backdrop-blur-sm">
-                            <option value="all" class="text-slate-900">Total (Next 12 Months)</option>
-                            <template x-for="month in availableMonths" :key="month.value">
-                                <option :value="month.value" x-text="month.label" class="text-slate-900"></option>
+                    <div x-show="!loading && !error" x-cloak class="flex items-center gap-3 flex-wrap w-full sm:w-auto">
+                        {{-- ══ Sync Forecast Button ══ --}}
+                        <button
+                            @click="triggerSync()"
+                            :disabled="syncStatus === 'syncing'"
+                            x-show="syncStatus !== 'success'"
+                            :class="{
+                                'bg-[#008080]/20 hover:bg-[#008080]/40 border-[#008080]/50 text-[#40E0D0]': syncStatus === 'idle',
+                                'bg-amber-500/20 border-amber-500/40 text-amber-300 cursor-wait': syncStatus === 'syncing',
+                                'bg-rose-500/20 hover:bg-rose-500/30 border-rose-500/40 text-rose-300': syncStatus === 'error'
+                            }"
+                            class="px-4 py-2 rounded-xl text-sm font-bold border transition-all flex items-center gap-2 whitespace-nowrap"
+                            id="sync-forecast-btn">
+                            <template x-if="syncStatus === 'idle'">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-rotate"></i> Sync Forecast
+                                </span>
                             </template>
-                        </select>
-                        <i
-                            class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none"></i>
+                            <template x-if="syncStatus === 'syncing'">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Syncing... This may take a moment
+                                </span>
+                            </template>
+                            <template x-if="syncStatus === 'error'">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Sync Failed. Retry?
+                                </span>
+                            </template>
+                        </button>
+
+                        {{-- Success Badge (briefly shown after sync) --}}
+                        <div x-show="syncStatus === 'success'" x-cloak
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 scale-90"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-bold whitespace-nowrap">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span x-text="'Synced at ' + lastSynced"></span>
+                        </div>
+
+                        {{-- Month Selector --}}
+                        <div class="relative w-full sm:w-auto">
+                            <select x-model="selectedMonth"
+                                class="w-full sm:w-auto bg-white/10 border border-white/20 text-white text-sm rounded-xl px-4 py-2 hover:bg-white/20 focus:ring-2 focus:ring-indigo-500 focus:outline-none appearance-none pr-10 cursor-pointer transition-colors backdrop-blur-sm">
+                                <option value="all" class="text-slate-900">Total (Next 12 Months)</option>
+                                <template x-for="month in availableMonths" :key="month.value">
+                                    <option :value="month.value" x-text="month.label" class="text-slate-900"></option>
+                                </template>
+                            </select>
+                            <i
+                                class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -762,7 +803,8 @@
                                 <div class="flex items-center gap-1.5 mb-2 flex-wrap">
                                     <template x-if="spot.isFallback">
                                         <span
-                                            class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                            class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1 cursor-help transition-colors hover:bg-amber-500/30"
+                                            title="AI detected unstable patterns. Using historical seasonal averages for safety.">
                                             <i class="fa-solid fa-shield-halved"></i> FALLBACK ACTIVE
                                         </span>
                                     </template>
@@ -999,6 +1041,23 @@
 
                         {{-- Modal Body --}}
                         <div class="p-6 pt-0 relative z-10 space-y-4 max-h-[60vh] overflow-y-auto">
+                            {{-- Detailed Fallback Insight --}}
+                            <template x-if="modalSpot.isFallback">
+                                <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                                            <i class="fa-solid fa-shield-halved text-amber-400 text-xs"></i>
+                                        </div>
+                                        <h4 class="text-[11px] font-black text-amber-300 uppercase tracking-widest">Selective Fallback Active</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                                        The SARIMA AI detected high volatility in recent visitor logs (MAPE > 100%). To prevent erratic predictions, the system has automatically switched to <strong class="text-white">Seasonal Mean Forecasting</strong>. 
+                                        <br/><br/>
+                                        <span class="text-slate-400 italic">"This ensures your staffing and resource decisions are based on reliable historical patterns for this season, rather than statistical noise caused by outliers."</span>
+                                    </p>
+                                </div>
+                            </template>
+
                             {{-- MAPE Accuracy --}}
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
                                 <div class="flex items-center justify-between">
@@ -1036,6 +1095,18 @@
                                         x-text="modalSpot.confidence_text"></span>
                                 </div>
                             </div>
+
+                            {{-- Seasonal Mean Strategy Note --}}
+                            <template x-if="modalSpot.isFallback">
+                                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                                    <h5 class="text-[10px] font-bold text-slate-300 uppercase mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-lightbulb text-amber-400"></i> Insight: Normal Pattern Analysis
+                                    </h5>
+                                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                                        This forecast reflects the <strong>"Standard Pattern"</strong> of tourism for this spot. Instead of complex AI predictions, the system utilizes historical averages to ensure your planning for this season remains <strong>realistic and stable</strong>.
+                                    </p>
+                                </div>
+                            </template>
 
                             {{-- Seasonal Mini Heatmap --}}
                             <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
@@ -1084,6 +1155,12 @@
                                     </h4>
                                 </div>
                                 <p class="text-sm text-slate-200 leading-relaxed" x-text="modalSpot.actionText"></p>
+                                
+                                <template x-if="modalSpot.isFallback">
+                                    <p class="text-[10px] text-amber-400/80 mt-3 flex items-center gap-1.5 font-medium">
+                                        <i class="fa-solid fa-info-circle"></i> Strategy based on historical seasonal norms.
+                                    </p>
+                                </template>
                             </div>
 
                             {{-- Priority Level --}}
@@ -1121,11 +1198,69 @@
                 selectedMonth: 'all',
                 availableMonths: [],
                 showSpotModal: false,
-                modalSpot: { name: '', rank: 0, predicted: 0, actionText: '', actionIcon: '', mape: 0, mape_interpretation: '', confidence_text: '', seasonal_analysis: [], peak_seasons: [] },
+                modalSpot: { name: '', rank: 0, predicted: 0, actionText: '', actionIcon: '', mape: 0, mape_interpretation: '', confidence_text: '', seasonal_analysis: [], peak_seasons: [], isFallback: false },
                 selectedSpotIndex: 0,
                 activeInsightsTab: 'chart',
                 forecastChartInstance: null,
                 fallbackActive: false, // UI flag for the whole system
+
+                // ══ Sync State ══
+                syncStatus: 'idle',   // 'idle' | 'syncing' | 'success' | 'error'
+                lastSynced: null,
+                _syncPollTimer: null,
+
+                async triggerSync() {
+                    this.syncStatus = 'syncing';
+                    try {
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        const res = await fetch('/admin/sarima/retrain', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (res.ok) {
+                            this._startSyncPolling();
+                        } else {
+                            this.syncStatus = 'error';
+                        }
+                    } catch (e) {
+                        console.error('Sync trigger failed:', e);
+                        this.syncStatus = 'error';
+                    }
+                },
+
+                _startSyncPolling() {
+                    if (this._syncPollTimer) clearInterval(this._syncPollTimer);
+                    this._syncPollTimer = setInterval(async () => {
+                        try {
+                            const res = await fetch('/admin/sarima/sync-status');
+                            if (!res.ok) return;
+                            const data = await res.json();
+
+                            if (data.status === 'success') {
+                                clearInterval(this._syncPollTimer);
+                                this._syncPollTimer = null;
+                                this.syncStatus = 'success';
+                                // Format the timestamp for display
+                                const d = new Date(data.last_synced);
+                                this.lastSynced = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                                // Refresh all forecast charts with the retrained data
+                                await this.initForecasts();
+                                // After 5 seconds, return button to idle
+                                setTimeout(() => { this.syncStatus = 'idle'; }, 5000);
+                            } else if (data.status === 'failed') {
+                                clearInterval(this._syncPollTimer);
+                                this._syncPollTimer = null;
+                                this.syncStatus = 'error';
+                            }
+                            // if 'running', keep polling
+                        } catch (e) {
+                            // network blip — keep polling
+                        }
+                    }, 5000);
+                },
                 // Fallback list — used only if /attractions endpoint is unreachable
                 fallbackSpots: [
                     'ENCHANTED RIVER',
@@ -1145,7 +1280,13 @@
                     return 'bg-rose-500/30 text-rose-300';
                 },
 
-                getActionForIndex(index) {
+                getActionForIndex(index, isFallback = false) {
+                    if (isFallback) {
+                        return {
+                            text: 'Operational stability is priority. Use historical peak patterns to guide staff scheduling and waste management protocols.',
+                            icon: 'fa-solid fa-shield-halved text-amber-400'
+                        };
+                    }
                     if (index <= 1) {
                         return {
                             text: 'Prioritize deployment of personnel and safety officers. Ensure maximum operational readiness of facilities.',
@@ -1165,7 +1306,7 @@
                 },
 
                 openSpotModal(spot, index) {
-                    const action = this.getActionForIndex(index);
+                    const action = this.getActionForIndex(index, spot.isFallback);
                     this.modalSpot = {
                         name: spot.name_formatted, rank: index + 1, predicted: spot.total_predicted,
                         actionText: action.text, actionIcon: action.icon,
@@ -1177,7 +1318,8 @@
                         fullData: spot,
                         historical_monthly: spot.historical_monthly || [],
                         historical_test: spot.historical_test || [],
-                        test_predicted: spot.test_predicted || []
+                        test_predicted: spot.test_predicted || [],
+                        isFallback: spot.isFallback || false
                     };
                     this.showSpotModal = true;
                 },
@@ -1407,7 +1549,7 @@
                             if (finalMape > 100) {
                                 console.warn(`MAPE for ${spotName} is ${finalMape}%. Switching to Seasonal Mean Forecasting fallback.`);
                                 finalForecasts = this.calculateSeasonalMean(data.historical_monthly || data.historical_test || []);
-                                finalInterpretation = "Seasonal Mean (Selective Fallback)";
+                                finalInterpretation = "Historical Normal Pattern";
                                 isFallback = true;
                             }
 

@@ -50,7 +50,7 @@ Route::middleware('guest')->group(function () {
 
     // Forgot Password / Reset
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-    Route::post('/forgot-password/send-otp', [AuthController::class, 'sendResetOtp']);
+    Route::post('/forgot-password/send-otp', [AuthController::class, 'sendResetOtp'])->middleware('throttle:5,1');
     Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtp']);
     Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword']);
 });
@@ -65,12 +65,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
+    // Forced Password Reset Routes
+    Route::get('/force-password-change', [AuthController::class, 'showForcePasswordChange'])->name('password.force-change');
+    Route::post('/force-password-change', [AuthController::class, 'forcePasswordUpdate'])->name('password.force-update');
+
     // ========================================
     // Email Verification Routes
     // ========================================
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
-    })->name('verification.notice');
+    })->middleware(['force_password_change'])->name('verification.notice');
 
     Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
         $request->fulfill();
@@ -80,19 +84,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('message', 'Verification link sent!');
-    })->middleware(['throttle:6,1'])->name('verification.send');
+    })->middleware(['throttle:6,1', 'force_password_change'])->name('verification.send');
 
     Route::get(
         '/user/dashboard',
         function () {
             return view('dashboard.user');
         }
-    )->middleware('verified')->name('user.dashboard');
+    )->middleware(['verified', 'force_password_change'])->name('user.dashboard');
 
     Route::get('/admin/dashboard', function () {
         $totalLogs = \App\Models\VisitorLog::count();
         return view('dashboard.index', compact('totalLogs'));
-    })->middleware('is_admin')->name('admin.dashboard');
+    })->middleware(['is_admin', 'force_password_change'])->name('admin.dashboard');
 
     // ── Real-time summary cards API (polled every 10s by Alpine.js) ──
     Route::get('/api/statistics/summary', function () {
@@ -216,7 +220,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('is_admin')->name('admin.attendants.destroy');
 
     // Visitor Logbook
-    Route::get('/logbook', [\App\Http\Controllers\VisitorLogController::class, 'page'])->name('logbook.index');
+    Route::get('/logbook', [\App\Http\Controllers\VisitorLogController::class, 'page'])->middleware('force_password_change')->name('logbook.index');
     Route::get('/api/logs', [\App\Http\Controllers\VisitorLogController::class, 'index'])->name('api.logs.index');
     Route::post('/api/logs', [\App\Http\Controllers\VisitorLogController::class, 'store'])->name('api.logs.store');
 
@@ -330,4 +334,45 @@ Route::middleware('auth')->group(function () {
             ], 502);
         }
     })->middleware('is_admin')->name('api.sarima.forecast');
+
+    // ════════════════════════════════════════════════════════════
+    // SARIMA Hybrid Retrain — Direct call to FastAPI
+    // FastAPI /retrain runs in a background thread and returns
+    // immediately. Poll /admin/sarima/sync-status for progress.
+    // ════════════════════════════════════════════════════════════
+    Route::post('/admin/sarima/retrain', function () {
+        try {
+            $apiUrl = rtrim(config('services.sarima.url', 'http://localhost:8000'), '/');
+            $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                ->withHeaders(['ngrok-skip-browser-warning' => '1'])
+                ->timeout(30)
+                ->post($apiUrl . '/retrain');
+
+            return response($response->body(), $response->status())
+                ->header('Content-Type', 'application/json');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'SARIMA API unreachable: ' . $e->getMessage()
+            ], 502);
+        }
+    })->middleware('is_admin')->name('admin.sarima.retrain');
+
+    Route::get('/admin/sarima/sync-status', function () {
+        try {
+            $apiUrl = rtrim(config('services.sarima.url', 'http://localhost:8000'), '/');
+            $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                ->withHeaders(['ngrok-skip-browser-warning' => '1'])
+                ->timeout(10)
+                ->get($apiUrl . '/sync-status');
+
+            return response($response->body(), $response->status())
+                ->header('Content-Type', 'application/json');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'detail' => 'SARIMA API unreachable: ' . $e->getMessage()
+            ], 502);
+        }
+    })->middleware('is_admin')->name('admin.sarima.sync-status');
 });

@@ -22,3 +22,11 @@ Schedule::call(function () {
         \Illuminate\Support\Facades\Log::info("Purged {$deletedCount} pending attendant accounts older than 30 days.");
     }
 })->daily();
+
+// ── SARIMA Hybrid Retrain (Daily at 12:00 AM) ──
+// Dispatches RetrainForecastJob which calls FastAPI /retrain
+// to merge CSV baseline + MySQL delta and refit all 8 models.
+Schedule::job(new \App\Jobs\RetrainForecastJob)
+    ->dailyAt('00:00')
+    ->name('sarima-retrain')
+    ->withoutOverlapping();
