@@ -5,6 +5,7 @@
 | :--- | :--- |
 | **Project Title** | HinaTourist: A WEB-BASED VISITOR MONITORING AND FORECASTING SYSTEM FOR HINATUAN TOURISM |
 | **Document Version** | 1.0 |
+| **GitHub Repository** | https://github.com/RoubiFD-CW/CSThesis-HinaTourist |
 | **Core Frameworks** | Laravel 11, Vite, Alpine.js, Tailwind CSS, Python FastAPI, Statsmodels |
 | **Database Engine** | MySQL 8.0+ / MariaDB |
 
